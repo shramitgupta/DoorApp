@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "406740472183",
+    "project_id": "doorapp-93356",
+    "storage_bucket": "doorapp-93356.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406740472183:android:2250f41b06315d1612d172",
+        "android_client_info": {
+          "package_name": "com.example.doorapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406740472183-ajhi3g4bb8slvtu5jk2dd19st21kq1bd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.doorapp",
+            "certificate_hash": "6866534ddda756a53b153b9279664f451d607e0d"
+          }
+        },
+        {
+          "client_id": "406740472183-ihqq2lcmkeieftd33cvi2fsn7f58c2pv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHfzJVfSrsgMLmtKCtpSeC2kzga8fEkX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406740472183-ihqq2lcmkeieftd33cvi2fsn7f58c2pv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

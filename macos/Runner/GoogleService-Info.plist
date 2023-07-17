@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>406740472183-k8m8rp4t735ac1e20nigk4qhgnrh2ir0.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.406740472183-k8m8rp4t735ac1e20nigk4qhgnrh2ir0</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>406740472183-ajhi3g4bb8slvtu5jk2dd19st21kq1bd.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCH8-s6dy4ducijyEC6WlYmF9XOVnHA3L0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>406740472183</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.doorapp.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>doorapp-93356</string>
+	<key>STORAGE_BUCKET</key>
+	<string>doorapp-93356.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:406740472183:ios:10b53cca179d01a512d172</string>
+</dict>
+</plist>
