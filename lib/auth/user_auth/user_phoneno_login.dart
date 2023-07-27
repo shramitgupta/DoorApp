@@ -1,15 +1,15 @@
-import 'package:doorapp/Auth_admin/admin_gmail_login.dart';
-import 'package:doorapp/Auth_admin/admin_signup.dart';
+import 'package:doorapp/auth/admin_auth/admin_gmail_login.dart';
+import 'package:doorapp/auth/user_auth/user_gmail_login.dart';
 import 'package:flutter/material.dart';
 
-class AdminPhoneNoLogin extends StatefulWidget {
-  AdminPhoneNoLogin({Key? key});
+class UserPhoneNoLogin extends StatefulWidget {
+  UserPhoneNoLogin({Key? key});
 
   @override
-  State<AdminPhoneNoLogin> createState() => _AdminPhoneNoLoginState();
+  State<UserPhoneNoLogin> createState() => _UserPhoneNoLoginState();
 }
 
-class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
+class _UserPhoneNoLoginState extends State<UserPhoneNoLogin> {
   final TextEditingController _contactNumberController =
       TextEditingController();
 
@@ -32,7 +32,7 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
                   height: screenHeight * 0.1,
                 ),
                 const Text(
-                  " Admin",
+                  " User",
                   style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                 ),
                 const Text(
@@ -111,7 +111,7 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AdminGmailLogin()),
+                              builder: (context) => UserGmailLogin()),
                         );
                       },
                     )
@@ -120,10 +120,10 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have account?"),
+                    const Text("Login as Admin?"),
                     TextButton(
                       child: const Text(
-                        'Sign Up',
+                        'Admin',
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.yellow,
@@ -133,7 +133,7 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AdminSignIn()),
+                              builder: (context) => AdminGmailLogin()),
                         );
                       },
                     )

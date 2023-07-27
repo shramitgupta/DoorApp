@@ -1,50 +1,103 @@
-import 'package:doorapp/Auth_admin/admin_phoneno_login.dart';
-import 'package:doorapp/Auth_admin/admin_signup.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doorapp/auth/admin_auth/admin_otp_signup.dart';
+import 'package:doorapp/auth/admin_auth/admin_phoneno_login.dart';
+import 'package:doorapp/auth/user_auth/user_phoneno_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AdminGmailLogin extends StatefulWidget {
-  AdminGmailLogin({Key? key});
+class AdminSignIn extends StatefulWidget {
+  const AdminSignIn({Key? key});
 
   @override
-  State<AdminGmailLogin> createState() => _AdminGmailLoginState();
+  State<AdminSignIn> createState() => _AdminSignInState();
 }
 
-class _AdminGmailLoginState extends State<AdminGmailLogin> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  void login() async {
-    String email = emailController.text.trim();
-    String password = passwordController.text.trim();
+class _AdminSignInState extends State<AdminSignIn> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController phonenoController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-    if (email == "" || password == "") {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fill all Fields ')),
+  void startPhoneNumberVerification(BuildContext context) async {
+    String phonenoString = phonenoController.text;
+    String phone = "+91" + phonenoString.trim();
+
+    try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phone,
+        codeSent: (verificationId, resendToken) {
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => AdminOtpSignup(
+                verificationId: verificationId,
+                onVerificationCompleted: (credential) {
+                  signUpUser(context, phonenoString);
+                },
+              ),
+            ),
+          );
+        },
+        verificationCompleted:
+            (credential) {}, // Empty function as a placeholder
+        verificationFailed: (ex) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Phone number verification failed: $ex')),
+          );
+        },
+        codeAutoRetrievalTimeout: (verificationId) {},
+        timeout: Duration(seconds: 30),
       );
-    } else {
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: email, password: password);
-        if (userCredential.user != null) {
-          Navigator.popUntil(context, (route) => route.isFirst);
-          Navigator.pushReplacement(
-              context,
-              CupertinoPageRoute(
-                  builder: (context) => const AdminHomeScreen()));
-        }
-      } on FirebaseAuthException catch (ex) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$ex')),
-        );
-      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error while verifying phone number: $e')),
+      );
+    }
+  }
+
+  // Function to sign up a user with email, password, and phone number
+  void signUpUser(BuildContext context, String phonenoString) async {
+    String email = emailController.text;
+    String password = passwordController.text;
+    int phoneno = int.parse(phonenoString);
+
+    emailController.clear();
+    passwordController.clear();
+    phonenoController.clear();
+
+    try {
+      // Create a user with email and password using Firebase Authentication
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      await FirebaseFirestore.instance
+          .collection('Admin')
+          .doc(userCredential.user!.uid)
+          .set({
+        'email': email,
+        'password': password,
+        'contactNumber': phoneno,
+      });
+
+      // Show success message or navigate to the next screen
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Signup successful')),
+      );
+    } catch (e) {
+      // Handle signup error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Signup failed: $e')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    //double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -65,11 +118,11 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                   style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                 ),
                 const Text(
-                  " Login",
+                  " Sign Up",
                   style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
-                  height: screenHeight * 0.1,
+                  height: screenHeight * 0.01,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -78,9 +131,10 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                     // style: const TextStyle(height: 30),
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
-                      labelText: 'Enter Gmail ',
+                      labelText: 'Enter E-Mail',
                       labelStyle: const TextStyle(
-                          color: Color.fromARGB(255, 70, 63, 60)),
+                        color: Color.fromARGB(255, 70, 63, 60),
+                      ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         borderSide:
@@ -119,6 +173,30 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: phonenoController,
+                    // style: const TextStyle(height: 30),
+                    cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                    decoration: InputDecoration(
+                      labelText: 'Enter Phone No',
+                      labelStyle: const TextStyle(
+                          color: Color.fromARGB(255, 70, 63, 60)),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide:
+                            const BorderSide(width: 3, color: Colors.white),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 3,
+                          color: Color.fromARGB(255, 70, 63, 60),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
@@ -126,12 +204,7 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        login();
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => const AdminOtp()),
-                        // );
+                        startPhoneNumberVerification(context);
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
@@ -140,7 +213,7 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                         shape: const StadiumBorder(),
                       ),
                       child: const Text(
-                        "Login",
+                        "Sign in",
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -152,7 +225,7 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Login with Phone no?"),
+                    const Text('Already have account?'),
                     TextButton(
                       child: const Text(
                         'Login',
@@ -174,10 +247,10 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have account?"),
+                    const Text('Login as Carpenter'),
                     TextButton(
                       child: const Text(
-                        'Sign Up',
+                        'Carpenter',
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.yellow,
@@ -187,7 +260,7 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AdminSignIn()),
+                              builder: (context) => UserPhoneNoLogin()),
                         );
                       },
                     )

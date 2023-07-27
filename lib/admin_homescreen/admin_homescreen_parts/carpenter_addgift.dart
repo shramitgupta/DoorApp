@@ -74,6 +74,8 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -139,8 +141,10 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
                         );
                       },
                       child: Container(
-                        width: 100,
-                        height: 100,
+                        //width: 100,
+                        width: screenWidth * 0.3,
+                        //height: 100,
+                        height: screenHeight * 0.15,
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           image: (giftpic != null)

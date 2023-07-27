@@ -1,42 +1,43 @@
-import 'package:doorapp/auth/admin_auth/admin_signup.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_addgift.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_delete.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_details.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_giftrequest.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_leaderboard.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_regester.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_totalgifts.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_whattosend.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/qr_generator.dart';
+import 'package:doorapp/auth/user_auth/user_signup.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_giftdetails.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_leaderboard.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_profilescreen.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_qrscanner.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_redeemstatus.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_totalpoints.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AdminHomeScreen extends StatefulWidget {
-  const AdminHomeScreen({super.key});
+class UserHomeScreen extends StatefulWidget {
+  const UserHomeScreen({super.key});
 
   @override
-  State<AdminHomeScreen> createState() => _AdminHomeScreenState();
+  State<UserHomeScreen> createState() => _UserHomeScreenState();
 }
 
 List button = [
-  'Carpenter Regester',
-  'Qr Generator',
-  'Carpenter Details',
+  'Profile Screen',
+  'Qr Scanner',
+  'Total Points',
   'Leader Board',
-  'Gift Request',
-  'What to Send',
-  'Total Gifts Sent',
-  'Add Gifts',
-  'Delete Carpenter',
+  'Gift Details',
+  'Redeem Status',
+  'Points Used',
+  'Contact Details',
+  'Banking',
+  'Upcomming Events',
 ];
 
-class _AdminHomeScreenState extends State<AdminHomeScreen> {
+class _UserHomeScreenState extends State<UserHomeScreen> {
   void logOut() async {
     await FirebaseAuth.instance.signOut();
     Navigator.popUntil(context, (route) => route.isFirst);
     Navigator.pushReplacement(
-        context, CupertinoPageRoute(builder: (context) => AdminSignIn()));
+        context, CupertinoPageRoute(builder: (context) => UserSignIn()));
   }
 
   @override
@@ -53,7 +54,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         ),
         backgroundColor: const Color.fromARGB(255, 70, 63, 60),
         title: const Text(
-          'ADMIN HOME',
+          'CARPENTER HOME',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
@@ -89,42 +90,42 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CarpenterRegester(),
+                            builder: (context) => const UserProfileScreen(),
                           ),
                         );
                       } else if (index == 1) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const QrGenerator(),
+                            builder: (context) => const UserQrScanner(),
                           ),
                         );
                       } else if (index == 2) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CarpenterDetails(),
+                            builder: (context) => const UserTotalPoints(),
                           ),
                         );
                       } else if (index == 3) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CarpenterLeaderBoard(),
+                            builder: (context) => const UserLeaderBoard(),
                           ),
                         );
                       } else if (index == 4) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CarpenterGiftRequest(),
+                            builder: (context) => const UserGiftDetails(),
                           ),
                         );
                       } else if (index == 5) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CarpenterWhatToSend(),
+                            builder: (context) => UserRedeemStatus(),
                           ),
                         );
                       } else if (index == 6) {

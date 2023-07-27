@@ -1,84 +1,48 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doorapp/Auth_admin/admin_phoneno_login.dart';
-//import 'package:doorapp/Auth_admin/admin_otp.dart';
+import 'package:doorapp/auth/user_auth/user_phoneno_login.dart';
+import 'package:doorapp/auth/user_auth/user_signup.dart';
+import 'package:doorapp/user_homescreen/user_homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AdminSignIn extends StatefulWidget {
-  const AdminSignIn({Key? key});
+class UserGmailLogin extends StatefulWidget {
+  UserGmailLogin({Key? key});
 
   @override
-  State<AdminSignIn> createState() => _AdminSignInState();
+  State<UserGmailLogin> createState() => _UserGmailLoginState();
 }
 
-class _AdminSignInState extends State<AdminSignIn> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController phonenoController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  void signUpUser(BuildContext context) async {
-    String email = emailController.text;
-    String password = passwordController.text;
-    String phonenoString = phonenoController.text;
+class _UserGmailLoginState extends State<UserGmailLogin> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  void login() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
 
-    int phoneno = int.parse(phonenoString);
-
-    emailController.clear();
-    passwordController.clear();
-    phonenoController.clear();
-
-    try {
-      // Create a user with email and password using Firebase Authentication
-      final UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      // String phone = "+91" + phonenoController.text.trim();
-
-      // await FirebaseAuth.instance.verifyPhoneNumber(
-      //     phoneNumber: phone,
-      //     codeSent: (verificationId, resendToken) {
-      //       Navigator.push(
-      //           context,
-      //           CupertinoPageRoute(
-      //               builder: (context) => AdminOtp(
-      //                     verificationId: verificationId,
-      //                   )));
-      //     },
-      //     verificationCompleted: (credential) {},
-      //     verificationFailed: (ex) {
-      //       ScaffoldMessenger.of(context).showSnackBar(
-      //         SnackBar(content: Text(' $ex')),
-      //       );
-      //     },
-      //     codeAutoRetrievalTimeout: (verificationId) {},
-      //     timeout: Duration(seconds: 30));
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .set({
-        'email': email,
-        'password': password,
-        'contactNumber': phoneno,
-      });
-
-      // Show success message or navigate to the next screen
+    if (email == "" || password == "") {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Signup successful')),
+        SnackBar(content: Text('Fill all Fields ')),
       );
-    } catch (e) {
-      // Handle signup error
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Signup failed: $e')),
-      );
+    } else {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: email, password: password);
+        if (userCredential.user != null) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.pushReplacement(context,
+              CupertinoPageRoute(builder: (context) => const UserHomeScreen()));
+        }
+      } on FirebaseAuthException catch (ex) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$ex')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // double screenWidth = MediaQuery.of(context).size.width;
+    //double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -95,15 +59,15 @@ class _AdminSignInState extends State<AdminSignIn> {
                   height: screenHeight * 0.1,
                 ),
                 const Text(
-                  " Admin",
+                  " User",
                   style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                 ),
                 const Text(
-                  " Sign Up",
+                  " Login",
                   style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
-                  height: screenHeight * 0.01,
+                  height: screenHeight * 0.1,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -112,10 +76,9 @@ class _AdminSignInState extends State<AdminSignIn> {
                     // style: const TextStyle(height: 30),
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
-                      labelText: 'Enter E-Mail',
+                      labelText: 'Enter Gmail ',
                       labelStyle: const TextStyle(
-                        color: Color.fromARGB(255, 70, 63, 60),
-                      ),
+                          color: Color.fromARGB(255, 70, 63, 60)),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         borderSide:
@@ -154,30 +117,6 @@ class _AdminSignInState extends State<AdminSignIn> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: phonenoController,
-                    // style: const TextStyle(height: 30),
-                    cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                    decoration: InputDecoration(
-                      labelText: 'Enter Phone No',
-                      labelStyle: const TextStyle(
-                          color: Color.fromARGB(255, 70, 63, 60)),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.white),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          width: 3,
-                          color: Color.fromARGB(255, 70, 63, 60),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
@@ -185,7 +124,12 @@ class _AdminSignInState extends State<AdminSignIn> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        signUpUser(context);
+                        login();
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => const AdminOtp()),
+                        // );
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
@@ -194,7 +138,7 @@ class _AdminSignInState extends State<AdminSignIn> {
                         shape: const StadiumBorder(),
                       ),
                       child: const Text(
-                        "Sign in",
+                        "Login",
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -206,7 +150,7 @@ class _AdminSignInState extends State<AdminSignIn> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Already have account?'),
+                    const Text("Login with Phone no?"),
                     TextButton(
                       child: const Text(
                         'Login',
@@ -219,7 +163,29 @@ class _AdminSignInState extends State<AdminSignIn> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AdminPhoneNoLogin()),
+                              builder: (context) => UserPhoneNoLogin()),
+                        );
+                      },
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have account?"),
+                    TextButton(
+                      child: const Text(
+                        'Sign Up',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.yellow,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UserSignIn()),
                         );
                       },
                     )

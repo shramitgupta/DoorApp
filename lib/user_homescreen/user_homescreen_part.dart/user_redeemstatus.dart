@@ -1,28 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class CarpenterGiftRequest extends StatefulWidget {
-  const CarpenterGiftRequest({super.key});
+class UserRedeemStatus extends StatefulWidget {
+  UserRedeemStatus({super.key});
 
   @override
-  State<CarpenterGiftRequest> createState() => _CarpenterGiftRequestState();
+  State<UserRedeemStatus> createState() => _UserRedeemStatusState();
 }
 
-void updateApprovalStatus(DocumentSnapshot document) {
-  String currentStatus = document['status'];
-  String newStatus = currentStatus == 'approved' ? 'pending' : 'approved';
-
-  FirebaseFirestore.instance
-      .collection("giftasked")
-      .doc(document.id)
-      .update({'status': newStatus}).then((_) {
-    print('Approval status updated in Firestore');
-  }).catchError((error) {
-    print('Failed to update approval status: $error');
-  });
-}
-
-class _CarpenterGiftRequestState extends State<CarpenterGiftRequest> {
+class _UserRedeemStatusState extends State<UserRedeemStatus> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +23,7 @@ class _CarpenterGiftRequestState extends State<CarpenterGiftRequest> {
         ),
         backgroundColor: const Color.fromARGB(255, 70, 63, 60),
         title: const Text(
-          'GIFT REQUEST',
+          'STATUS',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
@@ -134,82 +120,65 @@ class _CarpenterGiftRequestState extends State<CarpenterGiftRequest> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Carpenter Name: ",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
+                              const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Carpenter Name: ",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    "Carpenter Mobile Number:",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
+                                    Text(
+                                      "Carpenter Mobile Number:",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      "Status:",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    document['name'],
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      document['name'],
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    document['phoneno'].toString(),
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
+                                    Text(
+                                      document['phoneno'].toString(),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      document['status'],
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
-                          ),
-                          const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: SizedBox(
-                              height: 32,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  updateApprovalStatus(document);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: document['status'] ==
-                                          'approved'
-                                      ? const Color.fromARGB(255, 233, 95,
-                                          85) // Change the color for "Remove from Approval"
-                                      : const Color.fromARGB(255, 70, 63,
-                                          60), // Default color for "Approved"
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12),
-                                  child: Text(
-                                    document['status'] == 'approved'
-                                        ? 'Remove from Approval'
-                                        : 'Approved',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
                           ),
                         ],
                       ),

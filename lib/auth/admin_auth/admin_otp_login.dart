@@ -1,16 +1,20 @@
-import 'package:doorapp/Auth_admin/admin_signup.dart';
+import 'package:doorapp/admin_homescreen/admin_homescreen.dart';
+import 'package:doorapp/auth/admin_auth/admin_signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AdminOtp extends StatefulWidget {
-  const AdminOtp({Key? key, required this.verificationId});
+class AdminOtpLogin extends StatefulWidget {
+  const AdminOtpLogin({
+    Key? key,
+    required this.verificationId,
+  });
   final String verificationId;
   @override
-  State<AdminOtp> createState() => _AdminOtpState();
+  State<AdminOtpLogin> createState() => _AdminOtpLoginState();
 }
 
-class _AdminOtpState extends State<AdminOtp> {
+class _AdminOtpLoginState extends State<AdminOtpLogin> {
   TextEditingController otpController = TextEditingController();
 
   void verifyOTP() async {
@@ -24,8 +28,8 @@ class _AdminOtpState extends State<AdminOtp> {
           await FirebaseAuth.instance.signInWithCredential(credential);
       if (userCredential.user != null) {
         Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacement(
-            context, CupertinoPageRoute(builder: (context) => AdminSignIn()));
+        Navigator.pushReplacement(context,
+            CupertinoPageRoute(builder: (context) => AdminHomeScreen()));
       }
     } on FirebaseAuthException catch (ex) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -93,7 +97,9 @@ class _AdminOtpState extends State<AdminOtp> {
                     margin: const EdgeInsets.all(10),
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        verifyOTP();
+                      },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 7.0),
