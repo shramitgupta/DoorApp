@@ -97,7 +97,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const UserQrScanner(),
+                            builder: (context) => UserQrScanner(),
                           ),
                         );
                       } else if (index == 2) {

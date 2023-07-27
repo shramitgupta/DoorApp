@@ -7,7 +7,7 @@ import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_leader
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_regester.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_totalgifts.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_whattosend.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/qr_generator.dart';
+import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_qr_generator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -96,7 +96,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const QrGenerator(),
+                            builder: (context) => QrGenerator(),
                           ),
                         );
                       } else if (index == 2) {
