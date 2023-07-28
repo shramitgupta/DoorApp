@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -21,6 +22,9 @@ class _CarpenterRegesterState extends State<CarpenterRegester> {
   TextEditingController cdobController = TextEditingController();
   TextEditingController canniversarydateController = TextEditingController();
   File? cprofilepic;
+  int points = 0;
+  String? _verificationId; // Store the verification ID for OTP verification
+
   Future<void> _getImageFromSource(ImageSource source) async {
     XFile? selectedImage = await ImagePicker().pickImage(source: source);
 
@@ -35,7 +39,93 @@ class _CarpenterRegesterState extends State<CarpenterRegester> {
     }
   }
 
-  Future<void> regesterCarpenter() async {
+  // Function to send OTP to the user's phone number
+  Future<void> _sendOTP() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String cpnoString = cpnoController.text.trim();
+    String countryCode = '+91'; // Replace this with your country code
+    String phoneNumber = '$countryCode$cpnoString';
+
+    try {
+      await auth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          // Auto-retrieve the OTP in case of instant verification (rare case)
+          await auth.signInWithCredential(credential);
+          await _uploadData(); // Proceed with data upload after OTP verification
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          print('Phone number verification failed: ${e.message}');
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          setState(() {
+            _verificationId = verificationId;
+          });
+          _showOTPDialg(); // Show OTP entry dialog when code is sent
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          setState(() {
+            _verificationId = verificationId;
+          });
+        },
+      );
+    } catch (e) {
+      print('Error sending OTP: $e');
+    }
+  }
+
+  // Function to show OTP entry dialog
+  void _showOTPDialg() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        String enteredOTP = ''; // Store the OTP entered by the user
+
+        return AlertDialog(
+          title: Text('Enter OTP'),
+          content: TextFormField(
+            keyboardType: TextInputType.number,
+            maxLength: 6,
+            onChanged: (value) {
+              enteredOTP = value; // Update the entered OTP as the user types
+            },
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+                _verifyOTP(enteredOTP); // Verify the entered OTP
+              },
+              child: Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Function to verify the OTP entered by the user
+  Future<void> _verifyOTP(String smsCode) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    try {
+      // Create a PhoneAuthCredential with the entered OTP
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId!,
+        smsCode: smsCode,
+      );
+
+      // Sign in the user with the credential
+      await auth.signInWithCredential(credential);
+
+      // OTP verification successful, proceed with data upload
+      await _uploadData();
+    } catch (e) {
+      print('Error verifying OTP: $e');
+    }
+  }
+
+  Future<void> _uploadData() async {
     String cname = cnameController.text.trim();
     String cpnoString = cpnoController.text.trim();
     String caddress = caddressController.text.trim();
@@ -47,13 +137,6 @@ class _CarpenterRegesterState extends State<CarpenterRegester> {
     int cpno = int.parse(cpnoString);
     int cage = int.parse(cageString);
 
-    cnameController.clear();
-    cpnoController.clear();
-    caddressController.clear();
-    cageController.clear();
-    cmaritalstatusController.clear();
-    cdobController.clear();
-    canniversarydateController.clear();
     if (cname.isNotEmpty &&
         cpnoString.isNotEmpty &&
         caddress.isNotEmpty &&
@@ -79,11 +162,14 @@ class _CarpenterRegesterState extends State<CarpenterRegester> {
         "cprofilepic": downloadUrl,
         "cdob": cdob,
         "canniversarydate": canniversarydate,
+        "points": points,
       };
-      FirebaseFirestore.instance.collection("carpenterData").add(carpenterData);
-      print('data Uploaded');
+      await FirebaseFirestore.instance
+          .collection("carpenterData")
+          .add(carpenterData);
+      print('Data Uploaded');
     } else {
-      print('fill data');
+      print('Fill in all data fields');
     }
 
     setState(() {
@@ -349,7 +435,7 @@ class _CarpenterRegesterState extends State<CarpenterRegester> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          regesterCarpenter();
+                          _sendOTP();
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(

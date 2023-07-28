@@ -69,6 +69,8 @@
 //   }
 // }
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -138,11 +140,22 @@ class _UserQrScannerState extends State<UserQrScanner> {
     setState(() {
       _controller = controller;
     });
+    String code = "";
     _controller!.scannedDataStream.listen((scanData) {
       // Handle the scanned QR code data here
-      setState(() {
-        _scannedPoints = _parseScannedData(scanData.code.toString());
-      });
+      log(scanData.code.toString());
+      if (code != scanData.code.toString()) {
+        log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
+        setState(() {
+          _scannedPoints = _parseScannedData(scanData.code.toString());
+        });
+        code = scanData.code.toString();
+      }
+      // setState(() {
+      //   log(scanData.code.toString());
+      //   _scannedPoints = _parseScannedData(scanData.code.toString());
+      // });
     });
   }
 
