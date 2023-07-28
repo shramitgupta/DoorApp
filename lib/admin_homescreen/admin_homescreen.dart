@@ -89,7 +89,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CarpenterRegester(),
+                            builder: (context) => const CarpenterRegister(),
                           ),
                         );
                       } else if (index == 1) {

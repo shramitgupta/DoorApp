@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-class CarpenterRegester extends StatefulWidget {
-  const CarpenterRegester({super.key});
+class CarpenterRegister extends StatefulWidget {
+  const CarpenterRegister({super.key});
 
   @override
-  State<CarpenterRegester> createState() => _CarpenterRegesterState();
+  State<CarpenterRegister> createState() => _CarpenterRegisterState();
 }
 
-class _CarpenterRegesterState extends State<CarpenterRegester> {
+class _CarpenterRegisterState extends State<CarpenterRegister> {
   TextEditingController cnameController = TextEditingController();
   TextEditingController cpnoController = TextEditingController();
   TextEditingController caddressController = TextEditingController();
@@ -168,11 +168,23 @@ class _CarpenterRegesterState extends State<CarpenterRegester> {
           .collection("carpenterData")
           .add(carpenterData);
       print('Data Uploaded');
+
+      // Clear fields after successful data upload
+      clearFields();
     } else {
       print('Fill in all data fields');
     }
+  }
 
+  void clearFields() {
     setState(() {
+      cnameController.clear();
+      cpnoController.clear();
+      caddressController.clear();
+      cageController.clear();
+      cmaritalstatusController.clear();
+      cdobController.clear();
+      canniversarydateController.clear();
       cprofilepic = null;
     });
   }
