@@ -1,5 +1,6 @@
 import 'package:doorapp/auth/admin_auth/admin_signup.dart';
 import 'package:doorapp/auth/user_auth/user_signup.dart';
+import 'package:doorapp/user_homescreen/user_homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 class UserOtp extends StatefulWidget {
   const UserOtp({Key? key, required this.verificationId});
   final String verificationId;
+
   @override
   State<UserOtp> createState() => _UserOtpState();
 }
@@ -24,9 +26,10 @@ class _UserOtpState extends State<UserOtp> {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
       if (userCredential.user != null) {
+        // Navigate to the AdminSignIn page after successful verification
         Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacement(
-            context, CupertinoPageRoute(builder: (context) => AdminSignIn()));
+        Navigator.pushReplacement(context,
+            CupertinoPageRoute(builder: (context) => UserHomeScreen()));
       }
     } on FirebaseAuthException catch (ex) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -37,7 +40,6 @@ class _UserOtpState extends State<UserOtp> {
 
   @override
   Widget build(BuildContext context) {
-    //double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -68,7 +70,6 @@ class _UserOtpState extends State<UserOtp> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
                     controller: otpController,
-                    // style: const TextStyle(height: 30),
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
                       labelText: 'Enter Otp',
@@ -94,7 +95,7 @@ class _UserOtpState extends State<UserOtp> {
                     margin: const EdgeInsets.all(10),
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: verifyOTP, // Call the verifyOTP function
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 7.0),
@@ -102,7 +103,7 @@ class _UserOtpState extends State<UserOtp> {
                         shape: const StadiumBorder(),
                       ),
                       child: const Text(
-                        "Submit ",
+                        "Submit",
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -114,7 +115,7 @@ class _UserOtpState extends State<UserOtp> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have account?"),
+                    const Text("Don't have an account?"),
                     TextButton(
                       child: const Text(
                         'Sign Up',
