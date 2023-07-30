@@ -20,15 +20,16 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return
+        // MaterialApp(
+        //   home: (FirebaseAuth.instance.currentUser != null)
+        //       ? UserHomeScreen() // UserPhoneNoLogin
+        //       : UserPhoneNoLogin(),
+        // );
+        MaterialApp(
       home: (FirebaseAuth.instance.currentUser != null)
-          ? UserHomeScreen() // UserPhoneNoLogin
-          : UserPhoneNoLogin(),
+          ? const AdminHomeScreen()
+          : const AdminSignIn(),
     );
-    //     MaterialApp(
-    //   home: (FirebaseAuth.instance.currentUser != null)
-    //       ? const AdminHomeScreen()
-    //       : const AdminSignIn(),
-    // );
   }
 }
