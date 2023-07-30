@@ -1,4 +1,6 @@
 import 'package:doorapp/admin_homescreen/admin_homescreen.dart';
+import 'package:doorapp/auth/admin_auth/admin_gmail_login.dart';
+import 'package:doorapp/auth/admin_auth/admin_signup.dart';
 import 'package:doorapp/auth/user_auth/user_phoneno_login.dart';
 import 'package:doorapp/user_homescreen/user_homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
     //     MaterialApp(
     //   home: (FirebaseAuth.instance.currentUser != null)
     //       ? const AdminHomeScreen()
-    //       : const AdminHomeScreen(),
+    //       : const AdminSignIn(),
     // );
   }
 }
