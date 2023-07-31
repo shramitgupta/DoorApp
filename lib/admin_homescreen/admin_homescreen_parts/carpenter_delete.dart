@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_profile.dart';
 
 class CarpenterDelete extends StatefulWidget {
   const CarpenterDelete({Key? key}) : super(key: key);
@@ -10,6 +10,16 @@ class CarpenterDelete extends StatefulWidget {
 }
 
 class _CarpenterDeleteState extends State<CarpenterDelete> {
+  final TextEditingController _searchController = TextEditingController();
+  final String _searchText = "";
+
+  Stream<QuerySnapshot> _getCarpentersStream() {
+    return FirebaseFirestore.instance
+        .collection("carpenterData")
+        .orderBy("points", descending: false)
+        .snapshots();
+  }
+
   void deleteCarpenter(String documentId) {
     FirebaseFirestore.instance
         .collection("carpenterData")
@@ -19,19 +29,6 @@ class _CarpenterDeleteState extends State<CarpenterDelete> {
       print("Carpenter deleted successfully!");
     }).catchError((error) {
       print("Error deleting carpenter: $error");
-    });
-  }
-
-  TextEditingController _searchController = TextEditingController();
-  String _searchText = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        _searchText = _searchController.text;
-      });
     });
   }
 
@@ -76,46 +73,47 @@ class _CarpenterDeleteState extends State<CarpenterDelete> {
           child: Container(
             height: MediaQuery.of(context).size.height,
             color: const Color.fromARGB(255, 195, 162, 132),
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("carpenterData")
-                  .orderBy("points", descending: false)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    List<QueryDocumentSnapshot> carpenters =
-                        snapshot.data!.docs;
+            child: Column(
+              children: [
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                //   child: Focus(
+                //     autofocus: true,
+                //     child: TextField(
+                //       controller: _searchController,
+                //       decoration: InputDecoration(
+                //         hintText: 'Search by name',
+                //         suffixIcon: IconButton(
+                //           onPressed: () {
+                //             _searchController.clear();
+                //           },
+                //           icon: Icon(Icons.clear),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                Expanded(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: _getCarpentersStream(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.active) {
+                          List<QueryDocumentSnapshot> carpenters =
+                              snapshot.data!.docs;
 
-                    // Filter carpenters based on search text
-                    if (_searchText.isNotEmpty) {
-                      carpenters = carpenters.where((carpenter) {
-                        String carpenterName =
-                            carpenter["cname"].toString().toLowerCase();
-                        return carpenterName
-                            .contains(_searchText.toLowerCase());
-                      }).toList();
-                    }
+                          // Filter carpenters based on search text
+                          if (_searchText.isNotEmpty) {
+                            carpenters = carpenters.where((carpenter) {
+                              String carpenterName =
+                                  carpenter["cname"].toString().toLowerCase();
+                              return carpenterName
+                                  .contains(_searchText.toLowerCase());
+                            }).toList();
+                          }
 
-                    return Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextField(
-                            controller: _searchController,
-                            decoration: InputDecoration(
-                              hintText: 'Search by name',
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  _searchController.clear();
-                                },
-                                icon: Icon(Icons.clear),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
+                          return ListView.builder(
                             itemCount: carpenters.length,
                             itemBuilder: (context, index) {
                               DocumentSnapshot document = carpenters[index];
@@ -245,52 +243,19 @@ class _CarpenterDeleteState extends State<CarpenterDelete> {
                                 ),
                               );
                             },
-                          ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return Expanded(child: Text("No data"));
-                  }
-                } else if (snapshot.hasError) {
-                  return Text("Error: ${snapshot.error}");
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class CustomButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPressed;
-
-  CustomButton({Key? key, required this.label, required this.onPressed})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(20), topRight: Radius.circular(20)),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
+                          );
+                        } else {
+                          return Expanded(child: Text("No data"));
+                        }
+                      } else if (snapshot.hasError) {
+                        return Text("Error: ${snapshot.error}");
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ),
