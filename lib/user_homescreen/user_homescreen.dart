@@ -1,13 +1,14 @@
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_addgift.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_delete.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_totalgifts.dart';
 import 'package:doorapp/auth/user_auth/user_signup.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/User_contact.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/User_pointsused.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_banking.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_giftdetails.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_leaderboard.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_profilescreen.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_qrscanner.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_redeemstatus.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_totalpoints.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_upcomming.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -132,21 +133,28 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CarpenterTotalGifts(),
+                            builder: (context) => const UserPointsUsed(),
                           ),
                         );
                       } else if (index == 7) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CarpenterAddGifts(),
+                            builder: (context) => const UserContactDetails(),
                           ),
                         );
                       } else if (index == 8) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CarpenterDelete(),
+                            builder: (context) => const UserBanking(),
+                          ),
+                        );
+                      } else if (index == 9) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const UserUpcommingEvent(),
                           ),
                         );
                       }
