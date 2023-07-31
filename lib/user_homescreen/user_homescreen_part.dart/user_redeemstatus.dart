@@ -1,14 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class UserRedeemStatus extends StatefulWidget {
-  UserRedeemStatus({super.key});
+  UserRedeemStatus({Key? key}) : super(key: key);
 
   @override
   State<UserRedeemStatus> createState() => _UserRedeemStatusState();
 }
 
 class _UserRedeemStatusState extends State<UserRedeemStatus> {
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserID();
+  }
+
+  void getUserID() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        userId = user.uid;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +51,10 @@ class _UserRedeemStatusState extends State<UserRedeemStatus> {
         centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection("giftasked").snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection("giftasked")
+            .where("userid", isEqualTo: userId) // Filter documents by userId
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.active) {
@@ -105,7 +126,7 @@ class _UserRedeemStatusState extends State<UserRedeemStatus> {
                                       Text(
                                         "Gift Claimed :- ${document['gifttype']}",
                                         style: const TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 14,
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
                                         ),

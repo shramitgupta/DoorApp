@@ -1,20 +1,24 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class UserAddress extends StatefulWidget {
-  UserAddress(
-      {required this.giftna,
-      required this.cashamt,
-      required this.points,
-      required this.yourpoints,
-      required this.giftpic,
-      super.key});
+  UserAddress({
+    required this.giftna,
+    required this.cashamt,
+    required this.points,
+    required this.yourpoints,
+    required this.giftpic,
+  });
+
   var points;
   String giftna;
   var cashamt;
   var yourpoints;
   String giftpic;
+
   @override
   State<UserAddress> createState() => _UserAddressState();
 }
@@ -28,6 +32,50 @@ class _UserAddressState extends State<UserAddress> {
   TextEditingController dnameController = TextEditingController();
   TextEditingController dpnoController = TextEditingController();
   TextEditingController daddressController = TextEditingController();
+
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserID();
+  }
+
+  void getUserID() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        userId = user.uid;
+      });
+    }
+  }
+
+  void onChoiceSelected(String selectedChoice) {
+    setState(() {
+      choice = selectedChoice;
+    });
+  }
+
+  bool hasEnoughPoints() {
+    int userPoints = widget.yourpoints;
+    int requiredPoints = widget.points;
+    return userPoints >= requiredPoints;
+  }
+
+  void deductPoints() {
+    int userPoints = widget.yourpoints;
+    log(userPoints.toString());
+    int requiredPoints = widget.points;
+    log(requiredPoints.toString());
+    int updatedPoints = userPoints - requiredPoints;
+    log(updatedPoints.toString());
+    if (userId != null) {
+      FirebaseFirestore.instance
+          .collection("carpenterData")
+          .doc(userId!) // Use the user ID as the document ID
+          .update({"points": updatedPoints});
+    }
+  }
 
   Future<void> saveaddress() async {
     String name = nameController.text.trim();
@@ -54,25 +102,83 @@ class _UserAddressState extends State<UserAddress> {
         dpnoString.isNotEmpty &&
         daddress.isNotEmpty &&
         choice!.isNotEmpty) {
-      Map<String, dynamic> giftData = {
-        "gifttype": choice,
-        "name": name,
-        "phoneno": pno,
-        "address": address,
-        "dname": dname,
-        "dphoneno": dpno,
-        "daddress": daddress,
-        "status": status,
-        "points": widget.points,
-        "giftname": widget.giftna,
-        "cashamount": widget.cashamt,
-        "giftpic": widget.giftpic
-        //"yourpoints": widget.yourpoints,
-      };
-      FirebaseFirestore.instance.collection("giftasked").add(giftData);
-      print('data Uploaded');
+      if (hasEnoughPoints()) {
+        deductPoints();
+        Map<String, dynamic> giftData = {
+          "gifttype": choice,
+          "name": name,
+          "phoneno": pno,
+          "address": address,
+          "dname": dname,
+          "dphoneno": dpno,
+          "daddress": daddress,
+          "status": status,
+          "points": widget.points,
+          "giftname": widget.giftna,
+          "cashamount": widget.cashamt,
+          "giftpic": widget.giftpic,
+          //"yourpoints": widget.yourpoints,
+          "userid": userId,
+        };
+        FirebaseFirestore.instance.collection("giftasked").add(giftData);
+        print('Data Uploaded: Successfully Sent');
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Successfully Sent'),
+              content: Text('Gift request sent successfully.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        print('You do not have enough points.');
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Not Enough Points'),
+              content:
+                  Text('You do not have enough points to request this gift.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     } else {
-      print('fill data');
+      print('Fill in all the data.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Missing Information'),
+            content: Text('Please fill in all the required information.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -106,280 +212,236 @@ class _UserAddressState extends State<UserAddress> {
           padding: const EdgeInsets.all(25.0),
           child: Container(
             color: const Color.fromARGB(255, 195, 162, 132),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(15.0),
-                        child: Text(
-                          'Choose One:',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          choice = 'GIFT';
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 70, 63, 60),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(15.0),
+                          child: Text(
+                            'Choose One:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          'GIFT',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
+                        ElevatedButton(
+                          onPressed: () {
+                            onChoiceSelected('GIFT');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: choice == 'GIFT'
+                                ? Colors.green // Change the color when selected
+                                : const Color.fromARGB(255, 70, 63, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Text(
+                            'GIFT',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          choice = 'CASH';
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 70, 63, 60),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            onChoiceSelected('CASH');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: choice == 'CASH'
+                                ? Colors.green // Change the color when selected
+                                : const Color.fromARGB(255, 70, 63, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Text(
+                            'CASH',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          'CASH',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: nameController,
+                        // style: const TextStyle(height: 30),
+                        cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                        decoration: InputDecoration(
+                          labelText: 'Enter Name',
+                          labelStyle: const TextStyle(
+                              color: Color.fromARGB(255, 70, 63, 60)),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.white),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: nameController,
-                      // style: const TextStyle(height: 30),
-                      cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                      decoration: InputDecoration(
-                        labelText: 'Enter Name',
-                        labelStyle: const TextStyle(
-                            color: Color.fromARGB(255, 70, 63, 60)),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.white),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 3,
-                            color: Color.fromARGB(255, 70, 63, 60),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 3,
+                              color: Color.fromARGB(255, 70, 63, 60),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: pnoController,
-                      cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                      decoration: InputDecoration(
-                        counter: const Offstage(),
-                        labelText: 'Enter Phone No',
-                        labelStyle: const TextStyle(
-                            color: Color.fromARGB(255, 70, 63, 60)),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.white),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 3,
-                            color: Color.fromARGB(255, 70, 63, 60),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: pnoController,
+                        cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                        decoration: InputDecoration(
+                          counter: const Offstage(),
+                          labelText: 'Enter Phone No',
+                          labelStyle: const TextStyle(
+                              color: Color.fromARGB(255, 70, 63, 60)),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.white),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 3,
+                              color: Color.fromARGB(255, 70, 63, 60),
+                            ),
                           ),
                         ),
+                        keyboardType: TextInputType.number,
                       ),
-                      keyboardType: TextInputType.number,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: addressController,
-                      minLines: 1,
-                      maxLines: 5,
-                      cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 40.0, horizontal: 10),
-                        labelText: 'Enter Address',
-                        labelStyle: const TextStyle(
-                            color: Color.fromARGB(255, 70, 63, 60)),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.white),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 3,
-                            color: Color.fromARGB(255, 70, 63, 60),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: addressController,
+                        minLines: 1,
+                        maxLines: 5,
+                        cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 40.0, horizontal: 10),
+                          labelText: 'Enter Address',
+                          labelStyle: const TextStyle(
+                              color: Color.fromARGB(255, 70, 63, 60)),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.white),
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: dnameController,
-                      cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                      decoration: InputDecoration(
-                        labelText: 'Enter Dealer Name',
-                        labelStyle: const TextStyle(
-                            color: Color.fromARGB(255, 70, 63, 60)),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.white),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 3,
-                            color: Color.fromARGB(255, 70, 63, 60),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 3,
+                              color: Color.fromARGB(255, 70, 63, 60),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: dpnoController,
-                      cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                      //maxLength: 10,
-                      decoration: InputDecoration(
-                        labelText: 'Enter Dealer No',
-                        labelStyle: const TextStyle(
-                            color: Color.fromARGB(255, 70, 63, 60)),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.white),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 3,
-                            color: Color.fromARGB(255, 70, 63, 60),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: dnameController,
+                        cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                        decoration: InputDecoration(
+                          labelText: 'Enter Dealer Name',
+                          labelStyle: const TextStyle(
+                              color: Color.fromARGB(255, 70, 63, 60)),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.white),
                           ),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: daddressController,
-                      minLines: 1,
-                      maxLines: 5,
-                      cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 40.0, horizontal: 10),
-                        labelText: 'Enter Dealer Address',
-                        labelStyle: const TextStyle(
-                            color: Color.fromARGB(255, 70, 63, 60)),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.white),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 3,
-                            color: Color.fromARGB(255, 70, 63, 60),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 3,
+                              color: Color.fromARGB(255, 70, 63, 60),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      saveaddress();
-                      // if (widget.points <= widget.yourpoints) {
-                      //   int remainingPoints = widget.yourpoints - widget.points;
-                      //   String documentId = 'points';
-
-                      //   FirebaseFirestore.instance
-                      //       .collection('carpenterData')
-                      //       .doc(documentId)
-                      //       .update({'points': remainingPoints}).then((_) {
-                      //     // The points have been updated in Firestore.
-                      //     // Now, proceed with saving the address details.
-                      //     saveaddress();
-                      //   }).catchError((error) {
-                      //     showDialog(
-                      //       context: context,
-                      //       builder: (context) {
-                      //         return AlertDialog(
-                      //           title: const Text('Error'),
-                      //           content: const Text(
-                      //               'Failed to update points. Please try again later.'),
-                      //           actions: [
-                      //             TextButton(
-                      //               onPressed: () {
-                      //                 Navigator.of(context).pop();
-                      //               },
-                      //               child: const Text('OK'),
-                      //             ),
-                      //           ],
-                      //         );
-                      //       },
-                      //     );
-                      //   });
-                      // } else {
-                      //   showDialog(
-                      //     context: context,
-                      //     builder: (context) {
-                      //       return AlertDialog(
-                      //         title: const Text('Insufficient Points'),
-                      //         content: const Text(
-                      //             'You do not have enough points to proceed.'),
-                      //         actions: [
-                      //           TextButton(
-                      //             onPressed: () {
-                      //               Navigator.of(context).pop();
-                      //             },
-                      //             child: const Text('OK'),
-                      //           ),
-                      //         ],
-                      //       );
-                      //     },
-                      //   );
-                      // }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 125.0, vertical: 15.0),
-                      backgroundColor: const Color.fromARGB(255, 70, 63, 60),
-                      shape: const StadiumBorder(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: dpnoController,
+                        cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                        //maxLength: 10,
+                        decoration: InputDecoration(
+                          labelText: 'Enter Dealer No',
+                          labelStyle: const TextStyle(
+                              color: Color.fromARGB(255, 70, 63, 60)),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.white),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 3,
+                              color: Color.fromARGB(255, 70, 63, 60),
+                            ),
+                          ),
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
                     ),
-                    child: const Text(
-                      "SEND",
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: daddressController,
+                        minLines: 1,
+                        maxLines: 5,
+                        cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 40.0, horizontal: 10),
+                          labelText: 'Enter Dealer Address',
+                          labelStyle: const TextStyle(
+                              color: Color.fromARGB(255, 70, 63, 60)),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide:
+                                const BorderSide(width: 3, color: Colors.white),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 3,
+                              color: Color.fromARGB(255, 70, 63, 60),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                    ElevatedButton(
+                      onPressed: () {
+                        saveaddress();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 120.0, vertical: 15.0),
+                        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+                        shape: const StadiumBorder(),
+                      ),
+                      child: const Text(
+                        "SEND",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
             ),
           ),

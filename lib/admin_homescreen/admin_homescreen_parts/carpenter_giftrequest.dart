@@ -119,7 +119,7 @@ class _CarpenterGiftRequestState extends State<CarpenterGiftRequest> {
                                       Text(
                                         "Gift Claimed :- ${document['gifttype']}",
                                         style: const TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 14,
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
                                         ),

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import the intl package for date formatting
 
 class UserPointsHistory extends StatefulWidget {
   const UserPointsHistory({Key? key}) : super(key: key);
@@ -49,7 +50,8 @@ class _UserPointsHistoryState extends State<UserPointsHistory> {
           padding: const EdgeInsets.all(25.0),
           child: Container(
             height: MediaQuery.of(context).size.height,
-            color: const Color.fromARGB(255, 195, 162, 132),
+            color: Colors
+                .white, // Changed to white for the main container background
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection("qrscandata")
@@ -72,7 +74,10 @@ class _UserPointsHistoryState extends State<UserPointsHistory> {
                     log(document.toString());
                     DateTime dateTime =
                         (document["timestamp"] as Timestamp).toDate();
-                    // log(document["timestamp"].toString());
+                    // Format the DateTime to display in hours and minutes
+                    String formattedTime =
+                        DateFormat('dd MMM yyyy, HH:mm').format(dateTime);
+
                     return ListTile(
                       title: Container(
                         margin: EdgeInsets.symmetric(
@@ -82,18 +87,25 @@ class _UserPointsHistoryState extends State<UserPointsHistory> {
                           //horizontal: 20,
                         ),
                         decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15)),
+                          color: Color.fromARGB(255, 195, 162, 132),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
-                              "Time: ${dateTime.toString()}", // Display the time
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              "Date & Time: $formattedTime", // Display the formatted time
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white, // Set text color to white
+                              ),
                             ),
                             Text(
                               "Points: ${document["scannedPoints"]}", // Display the points
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white, // Set text color to white
+                              ),
                             ),
                           ],
                         ),
@@ -109,59 +121,3 @@ class _UserPointsHistoryState extends State<UserPointsHistory> {
     );
   }
 }
-// title: Container(
-                            //   margin: EdgeInsets.symmetric(
-                            //     vertical: screenHeight * 0.01,
-                            //     horizontal: screenWidth * 0.001,
-                            //   ),
-                            //   child: Column(
-                            //     crossAxisAlignment: CrossAxisAlignment.stretch,
-                            //     children: [
-                            //       Stack(
-                            //         clipBehavior: Clip.none,
-                            //         children: [
-                            //           Positioned(
-                            //             top: screenHeight * 0.01,
-                            //             left: screenHeight * 0.01,
-                            //             right: 0,
-                            //             child: Container(
-                            //               constraints: BoxConstraints(
-                            //                 maxHeight: screenHeight * 0.06,
-                            //               ),
-                            //               padding: EdgeInsets.only(
-                            //                 top: screenHeight * 0.022,
-                            //                 bottom: screenHeight * 0.01,
-                            //                 left: screenWidth * 0.2,
-                            //               ),
-                            //               decoration: BoxDecoration(
-                            //                   color: Colors.white,
-                            //                   borderRadius:
-                            //                       BorderRadius.circular(15)),
-                            //               child: Row(
-                            //                 mainAxisAlignment:
-                            //                     MainAxisAlignment.spaceBetween,
-                            //                 children: [
-                            //                   Text(
-                            //                     "Time: ${dateTime.toString()}", // Display the time
-                            //                     style: TextStyle(
-                            //                         fontWeight:
-                            //                             FontWeight.bold),
-                            //                   ),
-                            //                   Text(
-                            //                     "Points: ${document["scannedPoints"]}", // Display the points
-                            //                     style: TextStyle(
-                            //                         fontWeight:
-                            //                             FontWeight.bold),
-                            //                   ),
-                            //                   SizedBox(
-                            //                     width: screenWidth * 0.01,
-                            //                   ),
-                            //                 ],
-                            //               ),
-                            //             ),
-                            //           ),
-                            //         ],
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
