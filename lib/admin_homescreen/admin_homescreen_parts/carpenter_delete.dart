@@ -69,6 +69,7 @@ class _CarpenterDeleteState extends State<CarpenterDelete> {
         centerTitle: true,
       ),
       body: Container(
+        width: double.infinity,
         color: const Color.fromARGB(255, 70, 63, 60),
         child: Padding(
           padding: const EdgeInsets.all(25.0),

@@ -57,17 +57,19 @@ class _UserAddressState extends State<UserAddress> {
 
   bool hasEnoughPoints() {
     int userPoints = widget.yourpoints;
+    log(userPoints.toString());
     int requiredPoints = widget.points;
+    log(requiredPoints.toString());
     return userPoints >= requiredPoints;
   }
 
   void deductPoints() {
     int userPoints = widget.yourpoints;
-    log(userPoints.toString());
+    // log(userPoints.toString());
     int requiredPoints = widget.points;
-    log(requiredPoints.toString());
+    //log(requiredPoints.toString());
     int updatedPoints = userPoints - requiredPoints;
-    log(updatedPoints.toString());
+    // log(updatedPoints.toString());
     if (userId != null) {
       FirebaseFirestore.instance
           .collection("carpenterData")
@@ -207,6 +209,7 @@ class _UserAddressState extends State<UserAddress> {
         centerTitle: true,
       ),
       body: Container(
+        height: double.infinity,
         color: const Color.fromARGB(255, 70, 63, 60),
         child: Padding(
           padding: const EdgeInsets.all(25.0),

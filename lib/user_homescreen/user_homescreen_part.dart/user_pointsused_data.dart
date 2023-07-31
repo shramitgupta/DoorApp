@@ -51,13 +51,14 @@ class _UserPointsUsedHistoryState extends State<UserPointsUsedHistory> {
             height: MediaQuery.of(context).size.height,
             color: Colors
                 .white, // Changed to white for the main container background
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
+            child: FutureBuilder<QuerySnapshot?>(
+              future: FirebaseFirestore.instance
                   .collection("giftasked")
                   .where('userid', isEqualTo: currentUserId)
                   .orderBy("timestamp", descending: true)
-                  .snapshots(),
+                  .get(),
               builder: (context, snapshot) {
+                log(snapshot.data.toString());
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }

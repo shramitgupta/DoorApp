@@ -36,12 +36,13 @@ class _CarpenterTotalGiftsState extends State<CarpenterTotalGifts> {
         centerTitle: true,
       ),
       body: Container(
+        width: double.infinity,
         color: const Color.fromARGB(255, 70, 63, 60),
         child: Padding(
           padding: const EdgeInsets.all(25.0),
           child: Container(
-            height: MediaQuery.of(context).size.height,
-            color: const Color.fromARGB(255, 195, 162, 132),
+            // height: MediaQuery.of(context).size.height,
+            color: Color.fromARGB(255, 132, 195, 180),
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('giftasked')
@@ -62,15 +63,12 @@ class _CarpenterTotalGiftsState extends State<CarpenterTotalGifts> {
                   ++totalgifts;
                 }
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    BalanceModel(
-                      label: 'Total Gift Sent',
-                      value: totalgifts,
-                      decimal: 0,
-                    ),
-                  ],
+                return Center(
+                  child: BalanceModel(
+                    label: 'Total Gift Sent',
+                    value: totalgifts,
+                    decimal: 0,
+                  ),
                 );
               },
             ),
@@ -95,6 +93,7 @@ class BalanceModel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           height: 60,
