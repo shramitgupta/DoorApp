@@ -20,7 +20,7 @@ class AdminHomeScreen extends StatefulWidget {
 }
 
 List button = [
-  'Carpenter Regester',
+  'Carpenter Register',
   'Qr Generator',
   'Carpenter Details',
   'Leader Board',

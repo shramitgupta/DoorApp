@@ -21,7 +21,26 @@ class _QrGeneratorState extends State<QrGenerator> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('QR Code Generator'),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromARGB(255, 195, 162, 132),
+            size: 35,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        title: const Text(
+          'QR CODE GENERATER',
+          style: TextStyle(
+            fontSize: 27,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 195, 162, 132),
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -46,7 +65,19 @@ class _QrGeneratorState extends State<QrGenerator> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _generateQRCodes,
-              child: Text('Generate QR Codes'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.brown,
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 5.0,
+              ),
+              child: Text(
+                'Generate QR Codes',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
             SizedBox(height: 16),
             Expanded(
@@ -61,7 +92,19 @@ class _QrGeneratorState extends State<QrGenerator> {
             ),
             ElevatedButton(
               onPressed: _generatePDF,
-              child: Text('Generate PDF & Download'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.brown,
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 5.0,
+              ),
+              child: Text(
+                'Generate PDF & Download',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
           ],
         ),

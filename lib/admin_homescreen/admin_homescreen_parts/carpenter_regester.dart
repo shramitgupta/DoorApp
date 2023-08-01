@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -22,11 +23,20 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
   TextEditingController cageController = TextEditingController();
   TextEditingController cmaritalstatusController = TextEditingController();
   TextEditingController cdobController = TextEditingController();
-  TextEditingController canniversarydateController = TextEditingController();
+  TextEditingController? canniversarydateController;
   File? cprofilepic;
   int points = 0;
   String? _verificationId; // Store the verification ID for OTP verification
   bool isLoading = false;
+  String? cmaritalstatus; // Track the marital status
+
+  @override
+  void initState() {
+    super.initState();
+    cmaritalstatus = "Married"; // Default value for marital status
+    canniversarydateController = TextEditingController();
+  }
+
   Future<void> _getImageFromSource(ImageSource source) async {
     XFile? selectedImage = await ImagePicker().pickImage(source: source);
 
@@ -141,9 +151,7 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
     String cpnoString = cpnoController.text.trim();
     String caddress = caddressController.text.trim();
     String cageString = cageController.text.trim();
-    String cmaritalstatus = cmaritalstatusController.text.trim();
     String cdob = cdobController.text.trim();
-    String canniversarydate = canniversarydateController.text.trim();
 
     int cpno = int.parse(cpnoString);
     int cage = int.parse(cageString);
@@ -152,9 +160,10 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
         cpnoString.isNotEmpty &&
         caddress.isNotEmpty &&
         cageString.isNotEmpty &&
-        cmaritalstatus.isNotEmpty &&
+        cmaritalstatus != null &&
         cdob.isNotEmpty &&
-        canniversarydate.isNotEmpty &&
+        (cmaritalstatus != 'Married' ||
+            canniversarydateController!.text.isNotEmpty) &&
         cprofilepic != null) {
       UploadTask uploadTask = FirebaseStorage.instance
           .ref()
@@ -172,9 +181,13 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
         "cmaritalstatus": cmaritalstatus,
         "cprofilepic": downloadUrl,
         "cdob": cdob,
-        "canniversarydate": canniversarydate,
         "points": points,
       };
+
+      if (cmaritalstatus == 'Married') {
+        carpenterData["canniversarydate"] = canniversarydateController!.text;
+      }
+
       await FirebaseFirestore.instance
           .collection("carpenterData")
           .doc(uid)
@@ -207,7 +220,7 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
       cageController.clear();
       cmaritalstatusController.clear();
       cdobController.clear();
-      canniversarydateController.clear();
+      canniversarydateController?.clear();
       cprofilepic = null;
     });
   }
@@ -238,7 +251,7 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
 
     if (pickedDate != null) {
       setState(() {
-        canniversarydateController.text =
+        canniversarydateController!.text =
             "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
       });
     }
@@ -336,7 +349,6 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                         controller: cnameController,
                         enabled:
                             !isLoading, // Disable the field when isLoading is true
-                        // style: const TextStyle(height: 30),
                         cursorColor: const Color.fromARGB(255, 70, 63, 60),
                         decoration: InputDecoration(
                           labelText: 'Enter Name',
@@ -363,7 +375,6 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                         controller: cpnoController,
                         enabled:
                             !isLoading, // Disable the field when isLoading is true
-                        // style: const TextStyle(height: 30),
                         cursorColor: const Color.fromARGB(255, 70, 63, 60),
                         decoration: InputDecoration(
                           counter: const Offstage(),
@@ -390,7 +401,6 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                         controller: caddressController,
                         enabled:
                             !isLoading, // Disable the field when isLoading is true
-                        // style: const TextStyle(height: 30),
                         cursorColor: const Color.fromARGB(255, 70, 63, 60),
                         decoration: InputDecoration(
                           labelText: 'Enter Address',
@@ -418,7 +428,6 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                         controller: cageController,
                         enabled:
                             !isLoading, // Disable the field when isLoading is true
-                        // style: const TextStyle(height: 30),
                         cursorColor: const Color.fromARGB(255, 70, 63, 60),
                         decoration: InputDecoration(
                           counter: Offstage(),
@@ -441,14 +450,26 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        controller: cmaritalstatusController,
-                        enabled:
-                            !isLoading, // Disable the field when isLoading is true
-                        // style: const TextStyle(height: 30),
-                        cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                      child: DropdownButtonFormField<String>(
+                        value: cmaritalstatus,
+                        onChanged: (newValue) {
+                          setState(() {
+                            cmaritalstatus = newValue;
+                            if (cmaritalstatus == 'Married') {
+                              canniversarydateController?.clear();
+                            }
+                          });
+                        },
+                        items: <String>['Married', 'Not Married']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                         decoration: InputDecoration(
-                          labelText: 'Enter Marital Status ',
+                          enabled: !isLoading,
+                          labelText: 'Marital Status',
                           labelStyle: const TextStyle(
                               color: Color.fromARGB(255, 70, 63, 60)),
                           enabledBorder: OutlineInputBorder(
@@ -465,6 +486,34 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                         ),
                       ),
                     ),
+                    if (cmaritalstatus == 'Married')
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: canniversarydateController,
+                          enabled: !isLoading,
+                          cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                          onTap: () {
+                            _selectAnniversaryDate(context);
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Enter Anniversary Date',
+                            labelStyle: const TextStyle(
+                                color: Color.fromARGB(255, 70, 63, 60)),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: const BorderSide(
+                                  width: 3, color: Colors.white),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: 3,
+                                color: Color.fromARGB(255, 70, 63, 60),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
@@ -472,38 +521,10 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                         enabled: !isLoading,
                         cursorColor: const Color.fromARGB(255, 70, 63, 60),
                         onTap: () {
-                          _selectDOB(
-                              context); // Show the date picker when the field is tapped
+                          _selectDOB(context);
                         },
                         decoration: InputDecoration(
                           labelText: 'Enter DOB',
-                          labelStyle: const TextStyle(
-                              color: Color.fromARGB(255, 70, 63, 60)),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide:
-                                const BorderSide(width: 3, color: Colors.white),
-                          ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 3,
-                              color: Color.fromARGB(255, 70, 63, 60),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        controller: canniversarydateController,
-                        enabled: !isLoading,
-                        cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                        onTap: () {
-                          _selectAnniversaryDate(context);
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Enter Anniversary Date',
                           labelStyle: const TextStyle(
                               color: Color.fromARGB(255, 70, 63, 60)),
                           enabledBorder: OutlineInputBorder(
@@ -535,7 +556,7 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                             shape: const StadiumBorder(),
                           ),
                           child: const Text(
-                            "Regester",
+                            "Register",
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
