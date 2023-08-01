@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -16,9 +18,9 @@ void updateApprovalStatus(DocumentSnapshot document) {
       .collection("giftasked")
       .doc(document.id)
       .update({'status': newStatus}).then((_) {
-    print('Approval status updated in Firestore');
+    log('Approval status updated in Firestore');
   }).catchError((error) {
-    print('Failed to update approval status: $error');
+    log('Failed to update approval status: $error');
   });
 }
 
@@ -218,12 +220,12 @@ class _CarpenterGiftRequestState extends State<CarpenterGiftRequest> {
                 },
               );
             } else {
-              return Text("No data");
+              return const Text("No data");
             }
           } else if (snapshot.hasError) {
             return Text("Error: ${snapshot.error}");
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),

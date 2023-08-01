@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -26,9 +27,9 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
       setState(() {
         giftpic = convertedFile;
       });
-      print('Image selected!');
+      log('Image selected!');
     } else {
-      print('No image selected!');
+      log('No image selected!');
     }
   }
 
@@ -50,7 +51,7 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
       UploadTask uploadTask = FirebaseStorage.instance
           .ref()
           .child("giftpictures")
-          .child(Uuid().v1())
+          .child(const Uuid().v1())
           .putFile(giftpic!);
       TaskSnapshot taskSnapshot = await uploadTask;
       String downloadUrl = await taskSnapshot.ref.getDownloadURL();
@@ -62,9 +63,9 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
         "giftpic": downloadUrl,
       };
       FirebaseFirestore.instance.collection("Gifts").add(giftData);
-      print('data Uploaded');
+      log('data Uploaded');
     } else {
-      print('fill data');
+      log('fill data');
     }
 
     setState(() {
@@ -124,16 +125,16 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
                                     Navigator.pop(context);
                                     _getImageFromSource(ImageSource.gallery);
                                   },
-                                  leading: Icon(Icons.photo_library),
-                                  title: Text("Choose from Gallery"),
+                                  leading: const Icon(Icons.photo_library),
+                                  title: const Text("Choose from Gallery"),
                                 ),
                                 ListTile(
                                   onTap: () {
                                     Navigator.pop(context);
                                     _getImageFromSource(ImageSource.camera);
                                   },
-                                  leading: Icon(Icons.camera_alt),
-                                  title: Text("Take a Photo"),
+                                  leading: const Icon(Icons.camera_alt),
+                                  title: const Text("Take a Photo"),
                                 ),
                               ],
                             );

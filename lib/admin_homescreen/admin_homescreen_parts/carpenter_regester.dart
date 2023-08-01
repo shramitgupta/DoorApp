@@ -45,9 +45,9 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
       setState(() {
         cprofilepic = convertedFile;
       });
-      print('Image selected!');
+      log('Image selected!');
     } else {
-      print('No image selected!');
+      log('No image selected!');
     }
   }
 

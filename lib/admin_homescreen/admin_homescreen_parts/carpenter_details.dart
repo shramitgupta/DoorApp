@@ -90,7 +90,7 @@ class _CarpenterDetailsState extends State<CarpenterDetails> {
                                       children: [
                                         Text(
                                           "Name: ${document["cname"]}",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
                                         // ignore: prefer_const_constructors
@@ -100,7 +100,7 @@ class _CarpenterDetailsState extends State<CarpenterDetails> {
                                         ),
                                         Text(
                                           "Phone No:${document["cpno"].toString()}",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
                                         SizedBox(
@@ -112,7 +112,7 @@ class _CarpenterDetailsState extends State<CarpenterDetails> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            Text('ID:'),
+                                            const Text('ID:'),
                                             CustomButton(
                                                 label: 'View Profile',
                                                 onPressed: () {
@@ -175,12 +175,12 @@ class _CarpenterDetailsState extends State<CarpenterDetails> {
                   },
                 );
               } else {
-                return Text("No data");
+                return const Text("No data");
               }
             } else if (snapshot.hasError) {
               return Text("Error: ${snapshot.error}");
             } else {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),
@@ -193,7 +193,7 @@ class CustomButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
 
-  CustomButton({super.key, required this.label, required this.onPressed});
+  const CustomButton({super.key, required this.label, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

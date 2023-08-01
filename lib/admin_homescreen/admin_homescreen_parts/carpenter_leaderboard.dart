@@ -118,12 +118,12 @@ class _CarpenterLeaderBoardState extends State<CarpenterLeaderBoard> {
                                           children: [
                                             Text(
                                               "Name: ${document["cname"]}",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             Text(
                                               "Points: ${document["points"]}",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             SizedBox(
@@ -165,12 +165,12 @@ class _CarpenterLeaderBoardState extends State<CarpenterLeaderBoard> {
                       },
                     );
                   } else {
-                    return Text("No data");
+                    return const Text("No data");
                   }
                 } else if (snapshot.hasError) {
                   return Text("Error: ${snapshot.error}");
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
               },
             ),
@@ -185,7 +185,7 @@ class CustomButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
 
-  CustomButton({super.key, required this.label, required this.onPressed});
+  const CustomButton({super.key, required this.label, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

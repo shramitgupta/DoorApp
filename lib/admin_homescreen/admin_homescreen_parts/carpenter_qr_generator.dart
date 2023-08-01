@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
@@ -8,7 +9,10 @@ import 'package:uuid/uuid.dart'; // Import the UUID package
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QrGenerator extends StatefulWidget {
+  const QrGenerator({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _QrGeneratorState createState() => _QrGeneratorState();
 }
 
@@ -51,35 +55,35 @@ class _QrGeneratorState extends State<QrGenerator> {
             TextField(
               controller: _quantityController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Enter quantity of QR codes',
               ),
             ),
             TextField(
               controller: _pointsController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Enter points for QR codes',
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _generateQRCodes,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.brown,
-                padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 elevation: 5.0,
               ),
-              child: Text(
+              child: const Text(
                 'Generate QR Codes',
                 style: TextStyle(fontSize: 18),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: _generatedQRData.length,
@@ -95,13 +99,13 @@ class _QrGeneratorState extends State<QrGenerator> {
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.brown,
-                padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 elevation: 5.0,
               ),
-              child: Text(
+              child: const Text(
                 'Generate PDF & Download',
                 style: TextStyle(fontSize: 18),
               ),
@@ -118,7 +122,7 @@ class _QrGeneratorState extends State<QrGenerator> {
     List<String> newQRData = [];
 
     for (int i = 1; i <= quantity; i++) {
-      String id = Uuid().v4(); // Generate a unique ID using UUID
+      String id = const Uuid().v4(); // Generate a unique ID using UUID
       String data = 'ID: $id, Points: $points';
       newQRData.add(data);
 
@@ -141,7 +145,7 @@ class _QrGeneratorState extends State<QrGenerator> {
         'points': points,
       });
     } catch (e) {
-      print('Error uploading data to Firebase: $e');
+      log('Error uploading data to Firebase: $e');
     }
   }
 
