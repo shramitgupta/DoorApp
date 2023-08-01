@@ -1,4 +1,4 @@
-import 'package:doorapp/unused/user_signup.dart';
+import 'package:doorapp/auth/user_auth/user_phoneno_login.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/User_contact.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/User_pointsused.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_banking.dart';
@@ -38,7 +38,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     await FirebaseAuth.instance.signOut();
     Navigator.popUntil(context, (route) => route.isFirst);
     Navigator.pushReplacement(
-        context, CupertinoPageRoute(builder: (context) => UserSignIn()));
+        context, CupertinoPageRoute(builder: (context) => UserPhoneNoLogin()));
   }
 
   @override

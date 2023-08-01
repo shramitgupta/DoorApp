@@ -1,5 +1,4 @@
-import 'package:doorapp/unused/admin_signup.dart';
-import 'package:doorapp/unused/user_signup.dart';
+import 'package:doorapp/auth/admin_auth/admin_phoneno_login.dart';
 import 'package:doorapp/user_homescreen/user_homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -115,10 +114,10 @@ class _UserOtpState extends State<UserOtp> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an account?"),
+                    const Text("Login as Admin"),
                     TextButton(
                       child: const Text(
-                        'Sign Up',
+                        'Admin',
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.yellow,
@@ -128,7 +127,7 @@ class _UserOtpState extends State<UserOtp> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const UserSignIn()),
+                              builder: (context) => AdminPhoneNoLogin()),
                         );
                       },
                     )

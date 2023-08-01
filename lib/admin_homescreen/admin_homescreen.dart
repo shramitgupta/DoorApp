@@ -1,4 +1,4 @@
-import 'package:doorapp/unused/admin_signup.dart';
+import 'package:doorapp/auth/admin_auth/admin_phoneno_login.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_addgift.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_delete.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_details.dart';
@@ -36,7 +36,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     await FirebaseAuth.instance.signOut();
     Navigator.popUntil(context, (route) => route.isFirst);
     Navigator.pushReplacement(
-        context, CupertinoPageRoute(builder: (context) => AdminSignIn()));
+        context, CupertinoPageRoute(builder: (context) => AdminPhoneNoLogin()));
   }
 
   @override

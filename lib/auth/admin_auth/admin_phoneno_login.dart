@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doorapp/auth/user_auth/user_phoneno_login.dart';
-import 'package:doorapp/unused/admin_gmail_login.dart';
 import 'package:doorapp/auth/admin_auth/admin_otp_login.dart';
-import 'package:doorapp/unused/admin_signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -158,28 +156,6 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
                     ),
                   ),
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     const Text("Login with G-Mail?"),
-                //     TextButton(
-                //       child: const Text(
-                //         'Login',
-                //         style: TextStyle(
-                //           fontSize: 20,
-                //           color: Colors.yellow,
-                //         ),
-                //       ),
-                //       onPressed: () {
-                //         Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: (context) => AdminGmailLogin()),
-                //         );
-                //       },
-                //     )
-                //   ],
-                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
