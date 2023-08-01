@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_profile.dart';
@@ -26,9 +28,9 @@ class _CarpenterDeleteState extends State<CarpenterDelete> {
         .doc(documentId)
         .delete()
         .then((_) {
-      print("Carpenter deleted successfully!");
+      log("Carpenter deleted successfully!");
     }).catchError((error) {
-      print("Error deleting carpenter: $error");
+      log("Error deleting carpenter: $error");
     });
   }
 
@@ -174,7 +176,7 @@ class _CarpenterDeleteState extends State<CarpenterDelete> {
                                                 children: [
                                                   Text(
                                                     "Name: ${document["cname"]}",
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
@@ -214,43 +216,43 @@ class _CarpenterDeleteState extends State<CarpenterDelete> {
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
-                                          title: Text("Delete Carpenter"),
-                                          content: Text(
+                                          title: const Text("Delete Carpenter"),
+                                          content: const Text(
                                               "Are you sure you want to delete this carpenter?"),
                                           actions: [
                                             TextButton(
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
-                                              child: Text("Cancel"),
+                                              child: const Text("Cancel"),
                                             ),
                                             TextButton(
                                               onPressed: () {
                                                 deleteCarpenter(document.id);
                                                 Navigator.pop(context);
                                               },
-                                              child: Text("Delete"),
+                                              child: const Text("Delete"),
                                             ),
                                           ],
                                         );
                                       },
                                     );
                                   },
-                                  child: Text("Delete"),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                   ),
+                                  child: const Text("Delete"),
                                 ),
                               );
                             },
                           );
                         } else {
-                          return Expanded(child: Text("No data"));
+                          return const Expanded(child: Text("No data"));
                         }
                       } else if (snapshot.hasError) {
                         return Text("Error: ${snapshot.error}");
                       } else {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                     },
                   ),

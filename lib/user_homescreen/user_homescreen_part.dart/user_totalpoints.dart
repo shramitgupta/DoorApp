@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_giftdetails.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_pointshistory.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -75,11 +76,17 @@ class _UserTotalPointsState extends State<UserTotalPoints> {
                       height: 45,
                       width: MediaQuery.of(context).size.width * 0.9,
                       decoration: BoxDecoration(
-                        color: Colors.pink,
+                        color: const Color.fromARGB(255, 70, 63, 60),
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UserGiftDetails()),
+                          );
+                        },
                         child: const Text(
                           'Use the Points',
                           style: TextStyle(
@@ -94,7 +101,7 @@ class _UserTotalPointsState extends State<UserTotalPoints> {
                       height: 45,
                       width: MediaQuery.of(context).size.width * 0.9,
                       decoration: BoxDecoration(
-                        color: Colors.pink,
+                        color: const Color.fromARGB(255, 70, 63, 60),
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: MaterialButton(
@@ -217,7 +224,7 @@ class _AnimatedCounterState extends State<AnimatedCounter>
           child: Text(
             _animation.value.toStringAsFixed(widget.decimal),
             style: const TextStyle(
-              color: Colors.pink,
+              color: const Color.fromARGB(255, 70, 63, 60),
               fontSize: 40,
               fontFamily: 'Acme',
               letterSpacing: 2,

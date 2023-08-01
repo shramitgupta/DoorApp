@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CarpenterTotalGifts extends StatefulWidget {
@@ -59,6 +58,7 @@ class _CarpenterTotalGiftsState extends State<CarpenterTotalGifts> {
                 }
 
                 double totalgifts = 0.0;
+                // ignore: unused_local_variable
                 for (var item in snapshot.data!.docs) {
                   ++totalgifts;
                 }

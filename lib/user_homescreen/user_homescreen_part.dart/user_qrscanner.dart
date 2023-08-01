@@ -5,6 +5,8 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserQrScanner extends StatefulWidget {
+  const UserQrScanner({super.key});
+
   @override
   State<StatefulWidget> createState() => _UserQrScannerState();
 }
@@ -63,7 +65,7 @@ class _UserQrScannerState extends State<UserQrScanner> {
       body: Stack(
         children: [
           buildQrView(context),
-          Positioned.fill(
+          const Positioned.fill(
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Padding(

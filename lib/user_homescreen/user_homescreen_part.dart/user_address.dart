@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class UserAddress extends StatefulWidget {
   UserAddress({
     required this.giftna,
@@ -304,6 +305,7 @@ class _UserAddressState extends State<UserAddress> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         controller: pnoController,
+                        maxLength: 10,
                         cursorColor: const Color.fromARGB(255, 70, 63, 60),
                         decoration: InputDecoration(
                           counter: const Offstage(),
