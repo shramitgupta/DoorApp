@@ -68,9 +68,12 @@ class _UserOtpState extends State<UserOtp> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    keyboardType: TextInputType.phone,
+                    maxLength: 6,
                     controller: otpController,
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
+                      counter: Offstage(),
                       labelText: 'Enter Otp',
                       labelStyle: const TextStyle(
                           color: Color.fromARGB(255, 70, 63, 60)),

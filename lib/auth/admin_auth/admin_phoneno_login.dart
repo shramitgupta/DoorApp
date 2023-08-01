@@ -111,9 +111,12 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    maxLength: 10,
+                    keyboardType: TextInputType.phone,
                     controller: _contactNumberController,
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
+                      counter: Offstage(),
                       labelText: 'Enter Phone No',
                       labelStyle: const TextStyle(
                           color: Color.fromARGB(255, 70, 63, 60)),
@@ -137,9 +140,7 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
                     margin: const EdgeInsets.all(10),
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        startPhoneNumberVerification();
-                      },
+                      onPressed: startPhoneNumberVerification,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 7.0),

@@ -380,8 +380,9 @@ class _UserAddressState extends State<UserAddress> {
                       child: TextFormField(
                         controller: dpnoController,
                         cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                        //maxLength: 10,
+                        maxLength: 10,
                         decoration: InputDecoration(
+                          counter: Offstage(),
                           labelText: 'Enter Dealer No',
                           labelStyle: const TextStyle(
                               color: Color.fromARGB(255, 70, 63, 60)),

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doorapp/auth/admin_auth/admin_phoneno_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,33 +17,56 @@ class _UserPhoneNoLoginState extends State<UserPhoneNoLogin> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? _verificationId; // Store the verification ID for OTP verification
 
+  Future<bool> checkIfPhoneNumberExists(String phoneNumber) async {
+    String phoneString = _contactNumberController.text.trim();
+    int phone = int.parse(phoneString);
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('carpenterData')
+          .where('cpno', isEqualTo: phone)
+          .get();
+
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // Function to send OTP to the user's phone number
   Future<void> _sendOTP() async {
-    String phoneNumber =
-        '+91${_contactNumberController.text.trim()}'; // Replace this with your country code
+    String phoneNumber = '+91${_contactNumberController.text.trim()}';
     try {
-      await _auth.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          // Auto-retrieve the OTP in case of instant verification (rare case)
-          await _auth.signInWithCredential(credential);
-          _navigateToUserOtp(); // Navigate to UserOtp page after OTP verification
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          print('Phone number verification failed: ${e.message}');
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          setState(() {
-            _verificationId = verificationId;
-          });
-          _navigateToUserOtp(); // Navigate to UserOtp page after code is sent
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          setState(() {
-            _verificationId = verificationId;
-          });
-        },
-      );
+      // Check if the phone number exists in the Firestore collection "carpenterData"
+      bool phoneNumberExists = await checkIfPhoneNumberExists(phoneNumber);
+
+      if (phoneNumberExists) {
+        await _auth.verifyPhoneNumber(
+          phoneNumber: phoneNumber,
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            // Auto-retrieve the OTP in case of instant verification (rare case)
+            await _auth.signInWithCredential(credential);
+            _navigateToUserOtp(); // Navigate to UserOtp page after OTP verification
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            print('Phone number verification failed: ${e.message}');
+          },
+          codeSent: (String verificationId, int? resendToken) {
+            setState(() {
+              _verificationId = verificationId;
+            });
+            _navigateToUserOtp(); // Navigate to UserOtp page after code is sent
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            setState(() {
+              _verificationId = verificationId;
+            });
+          },
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User not found. Please sign up first.')),
+        );
+      }
     } catch (e) {
       print('Error sending OTP: $e');
     }
@@ -89,9 +113,12 @@ class _UserPhoneNoLoginState extends State<UserPhoneNoLogin> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    maxLength: 10,
+                    keyboardType: TextInputType.phone,
                     controller: _contactNumberController,
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
+                      counter: Offstage(),
                       labelText: 'Enter Phone No',
                       labelStyle: const TextStyle(
                           color: Color.fromARGB(255, 70, 63, 60)),

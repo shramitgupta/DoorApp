@@ -70,10 +70,13 @@ class _AdminOtpLoginState extends State<AdminOtpLogin> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    keyboardType: TextInputType.phone,
+                    maxLength: 6,
                     controller: otpController,
                     // style: const TextStyle(height: 30),
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
+                      counter: Offstage(),
                       labelText: 'Enter Otp',
                       labelStyle: const TextStyle(
                           color: Color.fromARGB(255, 70, 63, 60)),

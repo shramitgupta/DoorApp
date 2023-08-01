@@ -212,6 +212,38 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
     });
   }
 
+  Future<void> _selectDOB(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        cdobController.text =
+            "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+      });
+    }
+  }
+
+  Future<void> _selectAnniversaryDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        canniversarydateController.text =
+            "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -381,12 +413,15 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        maxLength: 2,
                         controller: cageController,
                         enabled:
                             !isLoading, // Disable the field when isLoading is true
                         // style: const TextStyle(height: 30),
                         cursorColor: const Color.fromARGB(255, 70, 63, 60),
                         decoration: InputDecoration(
+                          counter: Offstage(),
                           labelText: 'Enter Age',
                           labelStyle: const TextStyle(
                               color: Color.fromARGB(255, 70, 63, 60)),
@@ -434,12 +469,14 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         controller: cdobController,
-                        enabled:
-                            !isLoading, // Disable the field when isLoading is true
-                        // style: const TextStyle(height: 30),
+                        enabled: !isLoading,
                         cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                        onTap: () {
+                          _selectDOB(
+                              context); // Show the date picker when the field is tapped
+                        },
                         decoration: InputDecoration(
-                          labelText: 'Enter DOB ',
+                          labelText: 'Enter DOB',
                           labelStyle: const TextStyle(
                               color: Color.fromARGB(255, 70, 63, 60)),
                           enabledBorder: OutlineInputBorder(
@@ -460,10 +497,11 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         controller: canniversarydateController,
-                        enabled:
-                            !isLoading, // Disable the field when isLoading is true
-                        // style: const TextStyle(height: 30),
+                        enabled: !isLoading,
                         cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                        onTap: () {
+                          _selectAnniversaryDate(context);
+                        },
                         decoration: InputDecoration(
                           labelText: 'Enter Anniversary Date',
                           labelStyle: const TextStyle(
