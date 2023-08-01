@@ -1,18 +1,18 @@
-import 'package:doorapp/auth/admin_auth/admin_phoneno_login.dart';
-import 'package:doorapp/auth/admin_auth/admin_signup.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen.dart';
+import 'package:doorapp/auth/user_auth/user_phoneno_login.dart';
+import 'package:doorapp/unused/user_signup.dart';
+import 'package:doorapp/user_homescreen/user_homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AdminGmailLogin extends StatefulWidget {
-  AdminGmailLogin({Key? key});
+class UserGmailLogin extends StatefulWidget {
+  UserGmailLogin({Key? key});
 
   @override
-  State<AdminGmailLogin> createState() => _AdminGmailLoginState();
+  State<UserGmailLogin> createState() => _UserGmailLoginState();
 }
 
-class _AdminGmailLoginState extends State<AdminGmailLogin> {
+class _UserGmailLoginState extends State<UserGmailLogin> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   void login() async {
@@ -29,10 +29,8 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
             .signInWithEmailAndPassword(email: email, password: password);
         if (userCredential.user != null) {
           Navigator.popUntil(context, (route) => route.isFirst);
-          Navigator.pushReplacement(
-              context,
-              CupertinoPageRoute(
-                  builder: (context) => const AdminHomeScreen()));
+          Navigator.pushReplacement(context,
+              CupertinoPageRoute(builder: (context) => const UserHomeScreen()));
         }
       } on FirebaseAuthException catch (ex) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -61,7 +59,7 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                   height: screenHeight * 0.1,
                 ),
                 const Text(
-                  " Admin",
+                  " User",
                   style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                 ),
                 const Text(
@@ -165,7 +163,7 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AdminPhoneNoLogin()),
+                              builder: (context) => UserPhoneNoLogin()),
                         );
                       },
                     )
@@ -187,7 +185,7 @@ class _AdminGmailLoginState extends State<AdminGmailLogin> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AdminSignIn()),
+                              builder: (context) => const UserSignIn()),
                         );
                       },
                     )

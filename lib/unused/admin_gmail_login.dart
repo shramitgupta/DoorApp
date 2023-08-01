@@ -1,39 +1,44 @@
-import 'package:doorapp/auth/admin_auth/admin_signup.dart';
+import 'package:doorapp/auth/admin_auth/admin_phoneno_login.dart';
+import 'package:doorapp/unused/admin_signup.dart';
+import 'package:doorapp/admin_homescreen/admin_homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AdminOtpSignup extends StatefulWidget {
-  const AdminOtpSignup(
-      {Key? key,
-      required this.verificationId,
-      required Null Function(dynamic credential) onVerificationCompleted});
-  final String verificationId;
+class AdminGmailLogin extends StatefulWidget {
+  AdminGmailLogin({Key? key});
+
   @override
-  State<AdminOtpSignup> createState() => _AdminOtpSignupState();
+  State<AdminGmailLogin> createState() => _AdminGmailLoginState();
 }
 
-class _AdminOtpSignupState extends State<AdminOtpSignup> {
-  TextEditingController otpController = TextEditingController();
+class _AdminGmailLoginState extends State<AdminGmailLogin> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  void login() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
 
-  void verifyOTP() async {
-    String otp = otpController.text.trim();
-
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: widget.verificationId, smsCode: otp);
-
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      if (userCredential.user != null) {
-        Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacement(
-            context, CupertinoPageRoute(builder: (context) => AdminSignIn()));
-      }
-    } on FirebaseAuthException catch (ex) {
+    if (email == "" || password == "") {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(' $ex')),
+        SnackBar(content: Text('Fill all Fields ')),
       );
+    } else {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: email, password: password);
+        if (userCredential.user != null) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.pushReplacement(
+              context,
+              CupertinoPageRoute(
+                  builder: (context) => const AdminHomeScreen()));
+        }
+      } on FirebaseAuthException catch (ex) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$ex')),
+        );
+      }
     }
   }
 
@@ -56,11 +61,11 @@ class _AdminOtpSignupState extends State<AdminOtpSignup> {
                   height: screenHeight * 0.1,
                 ),
                 const Text(
-                  " Enter",
+                  " Admin",
                   style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                 ),
                 const Text(
-                  " OTP",
+                  " Login",
                   style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
@@ -69,11 +74,35 @@ class _AdminOtpSignupState extends State<AdminOtpSignup> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
-                    controller: otpController,
+                    controller: emailController,
                     // style: const TextStyle(height: 30),
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
-                      labelText: 'Enter Otp',
+                      labelText: 'Enter Gmail ',
+                      labelStyle: const TextStyle(
+                          color: Color.fromARGB(255, 70, 63, 60)),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide:
+                            const BorderSide(width: 3, color: Colors.white),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 3,
+                          color: Color.fromARGB(255, 70, 63, 60),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: passwordController,
+                    // style: const TextStyle(height: 30),
+                    cursorColor: const Color.fromARGB(255, 70, 63, 60),
+                    decoration: InputDecoration(
+                      labelText: 'Enter Password',
                       labelStyle: const TextStyle(
                           color: Color.fromARGB(255, 70, 63, 60)),
                       enabledBorder: OutlineInputBorder(
@@ -97,7 +126,12 @@ class _AdminOtpSignupState extends State<AdminOtpSignup> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        verifyOTP();
+                        login();
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => const AdminOtp()),
+                        // );
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
@@ -106,7 +140,7 @@ class _AdminOtpSignupState extends State<AdminOtpSignup> {
                         shape: const StadiumBorder(),
                       ),
                       child: const Text(
-                        "Submit ",
+                        "Login",
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -114,6 +148,28 @@ class _AdminOtpSignupState extends State<AdminOtpSignup> {
                       ),
                     ),
                   ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Login with Phone no?"),
+                    TextButton(
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.yellow,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AdminPhoneNoLogin()),
+                        );
+                      },
+                    )
+                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -1,42 +1,39 @@
-import 'package:doorapp/auth/user_auth/user_phoneno_login.dart';
-import 'package:doorapp/auth/user_auth/user_signup.dart';
-import 'package:doorapp/user_homescreen/user_homescreen.dart';
+import 'package:doorapp/unused/admin_signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class UserGmailLogin extends StatefulWidget {
-  UserGmailLogin({Key? key});
-
+class AdminOtpSignup extends StatefulWidget {
+  const AdminOtpSignup(
+      {Key? key,
+      required this.verificationId,
+      required Null Function(dynamic credential) onVerificationCompleted});
+  final String verificationId;
   @override
-  State<UserGmailLogin> createState() => _UserGmailLoginState();
+  State<AdminOtpSignup> createState() => _AdminOtpSignupState();
 }
 
-class _UserGmailLoginState extends State<UserGmailLogin> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  void login() async {
-    String email = emailController.text.trim();
-    String password = passwordController.text.trim();
+class _AdminOtpSignupState extends State<AdminOtpSignup> {
+  TextEditingController otpController = TextEditingController();
 
-    if (email == "" || password == "") {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fill all Fields ')),
-      );
-    } else {
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: email, password: password);
-        if (userCredential.user != null) {
-          Navigator.popUntil(context, (route) => route.isFirst);
-          Navigator.pushReplacement(context,
-              CupertinoPageRoute(builder: (context) => const UserHomeScreen()));
-        }
-      } on FirebaseAuthException catch (ex) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$ex')),
-        );
+  void verifyOTP() async {
+    String otp = otpController.text.trim();
+
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: widget.verificationId, smsCode: otp);
+
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      if (userCredential.user != null) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacement(
+            context, CupertinoPageRoute(builder: (context) => AdminSignIn()));
       }
+    } on FirebaseAuthException catch (ex) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(' $ex')),
+      );
     }
   }
 
@@ -59,11 +56,11 @@ class _UserGmailLoginState extends State<UserGmailLogin> {
                   height: screenHeight * 0.1,
                 ),
                 const Text(
-                  " User",
+                  " Enter",
                   style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                 ),
                 const Text(
-                  " Login",
+                  " OTP",
                   style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
@@ -72,35 +69,11 @@ class _UserGmailLoginState extends State<UserGmailLogin> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
-                    controller: emailController,
+                    controller: otpController,
                     // style: const TextStyle(height: 30),
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
-                      labelText: 'Enter Gmail ',
-                      labelStyle: const TextStyle(
-                          color: Color.fromARGB(255, 70, 63, 60)),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.white),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          width: 3,
-                          color: Color.fromARGB(255, 70, 63, 60),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: passwordController,
-                    // style: const TextStyle(height: 30),
-                    cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                    decoration: InputDecoration(
-                      labelText: 'Enter Password',
+                      labelText: 'Enter Otp',
                       labelStyle: const TextStyle(
                           color: Color.fromARGB(255, 70, 63, 60)),
                       enabledBorder: OutlineInputBorder(
@@ -124,12 +97,7 @@ class _UserGmailLoginState extends State<UserGmailLogin> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        login();
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => const AdminOtp()),
-                        // );
+                        verifyOTP();
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
@@ -138,7 +106,7 @@ class _UserGmailLoginState extends State<UserGmailLogin> {
                         shape: const StadiumBorder(),
                       ),
                       child: const Text(
-                        "Login",
+                        "Submit ",
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -146,28 +114,6 @@ class _UserGmailLoginState extends State<UserGmailLogin> {
                       ),
                     ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Login with Phone no?"),
-                    TextButton(
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.yellow,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UserPhoneNoLogin()),
-                        );
-                      },
-                    )
-                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -185,7 +131,7 @@ class _UserGmailLoginState extends State<UserGmailLogin> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const UserSignIn()),
+                              builder: (context) => const AdminSignIn()),
                         );
                       },
                     )

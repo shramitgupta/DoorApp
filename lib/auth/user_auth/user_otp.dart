@@ -1,5 +1,5 @@
-import 'package:doorapp/auth/admin_auth/admin_signup.dart';
-import 'package:doorapp/auth/user_auth/user_signup.dart';
+import 'package:doorapp/unused/admin_signup.dart';
+import 'package:doorapp/unused/user_signup.dart';
 import 'package:doorapp/user_homescreen/user_homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';

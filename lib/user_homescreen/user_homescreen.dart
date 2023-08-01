@@ -1,4 +1,4 @@
-import 'package:doorapp/auth/user_auth/user_signup.dart';
+import 'package:doorapp/unused/user_signup.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/User_contact.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/User_pointsused.dart';
 import 'package:doorapp/user_homescreen/user_homescreen_part.dart/user_banking.dart';

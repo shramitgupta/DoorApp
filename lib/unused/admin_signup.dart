@@ -1,5 +1,7 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doorapp/auth/admin_auth/admin_otp_signup.dart';
+import 'package:doorapp/unused/admin_otp_signup.dart';
 import 'package:doorapp/auth/admin_auth/admin_phoneno_login.dart';
 import 'package:doorapp/auth/user_auth/user_phoneno_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,8 +16,6 @@ class AdminSignIn extends StatefulWidget {
 }
 
 class _AdminSignInState extends State<AdminSignIn> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
   final TextEditingController phonenoController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -56,39 +56,25 @@ class _AdminSignInState extends State<AdminSignIn> {
     }
   }
 
-  // Function to sign up a user with email, password, and phone number
   void signUpUser(BuildContext context, String phonenoString) async {
-    String email = emailController.text;
-    String password = passwordController.text;
     int phoneno = int.parse(phonenoString);
 
-    emailController.clear();
-    passwordController.clear();
     phonenoController.clear();
 
     try {
-      // Create a user with email and password using Firebase Authentication
-      final UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      //final UserCredential userCredential = await _auth.signInAnonymously();
+
+      //String userId = userCredential.user!.uid;
 
       await FirebaseFirestore.instance
           .collection('Admin')
-          .doc(userCredential.user!.uid)
-          .set({
-        'email': email,
-        'password': password,
-        'contactNumber': phoneno,
-      });
-
-      // Show success message or navigate to the next screen
+          .doc()
+          .set({'contactNumber': phoneno});
+      log(phoneno.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Signup successful')),
       );
     } catch (e) {
-      // Handle signup error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Signup failed: $e')),
       );
@@ -97,7 +83,6 @@ class _AdminSignInState extends State<AdminSignIn> {
 
   @override
   Widget build(BuildContext context) {
-    // double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -127,57 +112,7 @@ class _AdminSignInState extends State<AdminSignIn> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
-                    controller: emailController,
-                    // style: const TextStyle(height: 30),
-                    cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                    decoration: InputDecoration(
-                      labelText: 'Enter E-Mail',
-                      labelStyle: const TextStyle(
-                        color: Color.fromARGB(255, 70, 63, 60),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.white),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          width: 3,
-                          color: Color.fromARGB(255, 70, 63, 60),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: passwordController,
-                    // style: const TextStyle(height: 30),
-                    cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                    decoration: InputDecoration(
-                      labelText: 'Enter Password',
-                      labelStyle: const TextStyle(
-                          color: Color.fromARGB(255, 70, 63, 60)),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide:
-                            const BorderSide(width: 3, color: Colors.white),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          width: 3,
-                          color: Color.fromARGB(255, 70, 63, 60),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
                     controller: phonenoController,
-                    // style: const TextStyle(height: 30),
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
                       labelText: 'Enter Phone No',
@@ -225,7 +160,7 @@ class _AdminSignInState extends State<AdminSignIn> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Already have account?'),
+                    const Text('Already have an account?'),
                     TextButton(
                       child: const Text(
                         'Login',
