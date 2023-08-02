@@ -14,6 +14,7 @@ class AdminPhoneNoLogin extends StatefulWidget {
 class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
   final TextEditingController _contactNumberController =
       TextEditingController();
+  bool isLoading = false; // Track the loading state
 
   Future<bool> checkIfPhoneNumberExists(String phoneNumber) async {
     String phoneString = _contactNumberController.text.trim();
@@ -31,8 +32,11 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
   }
 
   void startPhoneNumberVerification() async {
-    String phoneNumber = "+91" + _contactNumberController.text.trim();
+    setState(() {
+      isLoading = true; // Show loading indicator on button
+    });
 
+    String phoneNumber = "+91" + _contactNumberController.text.trim();
     bool phoneNumberExists = await checkIfPhoneNumberExists(phoneNumber);
 
     if (phoneNumberExists) {
@@ -78,6 +82,10 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
         SnackBar(content: Text('User not found. Please sign up first.')),
       );
     }
+
+    setState(() {
+      isLoading = false; // Hide loading indicator on button
+    });
   }
 
   @override
@@ -140,20 +148,30 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
                     margin: const EdgeInsets.all(10),
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: startPhoneNumberVerification,
+                      onPressed:
+                          isLoading ? null : startPhoneNumberVerification,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 7.0),
                         backgroundColor: Colors.white,
                         shape: const StadiumBorder(),
                       ),
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      child: isLoading
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
+                              ),
+                            )
+                          : const Text(
+                              "Login",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),

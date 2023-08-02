@@ -16,10 +16,14 @@ class AdminOtpLogin extends StatefulWidget {
 
 class _AdminOtpLoginState extends State<AdminOtpLogin> {
   TextEditingController otpController = TextEditingController();
+  bool isLoading = false; // Track the loading state
 
   void verifyOTP() async {
-    String otp = otpController.text.trim();
+    setState(() {
+      isLoading = true; // Show loading indicator on button
+    });
 
+    String otp = otpController.text.trim();
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: widget.verificationId, smsCode: otp);
 
@@ -35,12 +39,15 @@ class _AdminOtpLoginState extends State<AdminOtpLogin> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(' $ex')),
       );
+    } finally {
+      setState(() {
+        isLoading = false; // Hide loading indicator on button
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    //double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -73,7 +80,6 @@ class _AdminOtpLoginState extends State<AdminOtpLogin> {
                     keyboardType: TextInputType.phone,
                     maxLength: 6,
                     controller: otpController,
-                    // style: const TextStyle(height: 30),
                     cursorColor: const Color.fromARGB(255, 70, 63, 60),
                     decoration: InputDecoration(
                       counter: Offstage(),
@@ -100,22 +106,31 @@ class _AdminOtpLoginState extends State<AdminOtpLogin> {
                     margin: const EdgeInsets.all(10),
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        verifyOTP();
-                      },
+                      onPressed: isLoading
+                          ? null
+                          : verifyOTP, // Disable the button when loading
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 7.0),
                         backgroundColor: Colors.white,
                         shape: const StadiumBorder(),
                       ),
-                      child: const Text(
-                        "Submit ",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      child: isLoading
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
+                              ),
+                            )
+                          : const Text(
+                              "Submit ",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),

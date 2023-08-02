@@ -14,26 +14,38 @@ class UserOtp extends StatefulWidget {
 
 class _UserOtpState extends State<UserOtp> {
   TextEditingController otpController = TextEditingController();
+  bool isLoading = false; // Track the loading state
 
   void verifyOTP() async {
-    String otp = otpController.text.trim();
+    setState(() {
+      isLoading = true; // Show loading indicator on button
+    });
 
+    String otp = otpController.text.trim();
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: widget.verificationId, smsCode: otp);
+      verificationId: widget.verificationId,
+      smsCode: otp,
+    );
 
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
       if (userCredential.user != null) {
-        // Navigate to the AdminSignIn page after successful verification
+        // Navigate to the UserHomeScreen page after successful verification
         Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacement(context,
-            CupertinoPageRoute(builder: (context) => UserHomeScreen()));
+        Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(builder: (context) => UserHomeScreen()),
+        );
       }
     } on FirebaseAuthException catch (ex) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(' $ex')),
       );
+    } finally {
+      setState(() {
+        isLoading = false; // Hide loading indicator on button
+      });
     }
   }
 
@@ -97,20 +109,31 @@ class _UserOtpState extends State<UserOtp> {
                     margin: const EdgeInsets.all(10),
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: verifyOTP, // Call the verifyOTP function
+                      onPressed: isLoading
+                          ? null
+                          : verifyOTP, // Disable the button when loading
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 7.0),
                         backgroundColor: Colors.white,
                         shape: const StadiumBorder(),
                       ),
-                      child: const Text(
-                        "Submit",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      child: isLoading
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
+                              ),
+                            )
+                          : const Text(
+                              "Submit",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),

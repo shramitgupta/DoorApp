@@ -16,6 +16,7 @@ class _UserPhoneNoLoginState extends State<UserPhoneNoLogin> {
       TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? _verificationId; // Store the verification ID for OTP verification
+  bool isLoading = false; // Track loading state for the button
 
   Future<bool> checkIfPhoneNumberExists(String phoneNumber) async {
     String phoneString = _contactNumberController.text.trim();
@@ -34,6 +35,10 @@ class _UserPhoneNoLoginState extends State<UserPhoneNoLogin> {
 
   // Function to send OTP to the user's phone number
   Future<void> _sendOTP() async {
+    setState(() {
+      isLoading = true; // Show loading indicator on button
+    });
+
     String phoneNumber = '+91${_contactNumberController.text.trim()}';
     try {
       // Check if the phone number exists in the Firestore collection "carpenterData"
@@ -53,12 +58,14 @@ class _UserPhoneNoLoginState extends State<UserPhoneNoLogin> {
           codeSent: (String verificationId, int? resendToken) {
             setState(() {
               _verificationId = verificationId;
+              isLoading = false; // Hide loading indicator on button
             });
             _navigateToUserOtp(); // Navigate to UserOtp page after code is sent
           },
           codeAutoRetrievalTimeout: (String verificationId) {
             setState(() {
               _verificationId = verificationId;
+              isLoading = false; // Hide loading indicator on button
             });
           },
         );
@@ -66,9 +73,15 @@ class _UserPhoneNoLoginState extends State<UserPhoneNoLogin> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('User not found. Please sign up first.')),
         );
+        setState(() {
+          isLoading = false; // Hide loading indicator on button
+        });
       }
     } catch (e) {
       print('Error sending OTP: $e');
+      setState(() {
+        isLoading = false; // Hide loading indicator on button
+      });
     }
   }
 
@@ -77,8 +90,9 @@ class _UserPhoneNoLoginState extends State<UserPhoneNoLogin> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              UserOtp(verificationId: _verificationId.toString())),
+        builder: (context) =>
+            UserOtp(verificationId: _verificationId.toString()),
+      ),
     );
   }
 
@@ -142,20 +156,29 @@ class _UserPhoneNoLoginState extends State<UserPhoneNoLogin> {
                     margin: const EdgeInsets.all(10),
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _sendOTP,
+                      onPressed: isLoading ? null : _sendOTP,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 7.0),
                         backgroundColor: Colors.white,
                         shape: const StadiumBorder(),
                       ),
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      child: isLoading
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
+                              ),
+                            )
+                          : const Text(
+                              "Login",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),
