@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({super.key});
+  const UserProfileScreen({Key? key}) : super(key: key);
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -13,6 +13,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   String? documentId;
   CollectionReference customers =
       FirebaseFirestore.instance.collection('carpenterData');
+
   @override
   void initState() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
@@ -29,7 +30,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return FutureBuilder<DocumentSnapshot>(
       future: customers.doc(documentId).get(),
@@ -51,7 +52,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               leading: IconButton(
                 icon: const Icon(
                   Icons.arrow_back,
-                  color: Color.fromARGB(255, 195, 162, 132),
+                  color: Colors.white,
                   size: 35,
                 ),
                 onPressed: () {
@@ -74,94 +75,89 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
                 child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  color: const Color.fromARGB(255, 195, 162, 132),
+                  height: screenHeight,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 195, 162, 132),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: screenHeight * 0.02,
-                      ),
+                      SizedBox(height: screenHeight * 0.02),
                       Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 10),
-                            image: DecorationImage(
-                              image: NetworkImage(data["cprofilepic"]),
-                              fit: BoxFit.cover,
+                        child: Hero(
+                          tag: 'profileImage',
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(width: 10, color: Colors.brown),
+                              shape: BoxShape.circle,
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color.fromARGB(255, 70, 63, 60),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 5),
+                                ),
+                              ],
+                              image: DecorationImage(
+                                image: NetworkImage(data["cprofilepic"]),
+                                fit: BoxFit.cover,
+                              ),
                             ),
+                            height: screenHeight * 0.2,
+                            width: screenHeight * 0.2,
                           ),
-                          height: screenHeight * 0.2,
-                          width: screenWidth * 0.4,
                         ),
                       ),
+                      SizedBox(height: screenHeight * 0.03),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              height: screenHeight * 0.02,
-                            ),
                             Text(
                               "NAME: ${data["cname"]}",
                               style: TextStyle(
-                                  fontSize: screenHeight * 0.03,
-                                  fontWeight: FontWeight.bold),
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            SizedBox(
-                              height: screenHeight * 0.01,
-                            ),
+                            SizedBox(height: screenHeight * 0.01),
                             Text(
                               "Age: ${data["cage"].toString()}",
-                              style: TextStyle(
-                                  fontSize: screenHeight * 0.03,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20),
                             ),
-                            SizedBox(
-                              height: screenHeight * 0.01,
-                            ),
+                            SizedBox(height: screenHeight * 0.01),
                             Text(
                               "Phone No: ${data["cpno"].toString()}",
-                              style: TextStyle(
-                                  fontSize: screenHeight * 0.03,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20),
                             ),
-                            SizedBox(
-                              height: screenHeight * 0.01,
-                            ),
+                            SizedBox(height: screenHeight * 0.01),
                             Text(
                               "Address: ${data["caddress"]}",
-                              style: TextStyle(
-                                  fontSize: screenHeight * 0.03,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20),
                             ),
-                            SizedBox(
-                              height: screenHeight * 0.01,
-                            ),
+                            SizedBox(height: screenHeight * 0.01),
                             Text(
                               "Date Of Birth: ${data["cdob"]}",
-                              style: TextStyle(
-                                  fontSize: screenHeight * 0.03,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20),
                             ),
-                            SizedBox(
-                              height: screenHeight * 0.01,
-                            ),
+                            SizedBox(height: screenHeight * 0.01),
                             Text(
-                              "Maritial Status: ${data["cmaritalstatus"]}",
-                              style: TextStyle(
-                                  fontSize: screenHeight * 0.03,
-                                  fontWeight: FontWeight.bold),
+                              "Marital Status: ${data["cmaritalstatus"]}",
+                              style: TextStyle(fontSize: 20),
                             ),
-                            SizedBox(
-                              height: screenHeight * 0.01,
-                            ),
+                            SizedBox(height: screenHeight * 0.01),
                             Text(
                               "Anniversary Date: ${data["canniversarydate"]}",
-                              style: TextStyle(
-                                  fontSize: screenHeight * 0.03,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20),
                             ),
                           ],
                         ),
@@ -174,7 +170,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           );
         }
 
-        return const Center(
+        return Center(
           child: CircularProgressIndicator(
             color: Colors.brown,
           ),

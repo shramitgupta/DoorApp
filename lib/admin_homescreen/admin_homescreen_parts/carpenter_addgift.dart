@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class CarpenterAddGifts extends StatefulWidget {
-  const CarpenterAddGifts({super.key});
+  const CarpenterAddGifts({Key? key}) : super(key: key);
 
   @override
   State<CarpenterAddGifts> createState() => _CarpenterAddGiftsState();
@@ -33,10 +33,74 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
     }
   }
 
+  bool isUploading = false;
+
+  void showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Success'),
+          content: Text('Gift added successfully!'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showLoadingDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Uploading'),
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text('Please wait...'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> saveGift() async {
+    setState(() {
+      isUploading = true;
+    });
+
     String pointString = pointController.text.trim();
     String giftname = giftController.text.trim();
     String cashString = cashController.text.trim();
+
+    if (pointString.isEmpty ||
+        giftname.isEmpty ||
+        cashString.isEmpty ||
+        giftpic == null) {
+      showErrorSnackbar('Please fill all fields.');
+      setState(() {
+        isUploading = false;
+      });
+      return;
+    }
 
     int point = int.parse(pointString);
     int cash = int.parse(cashString);
@@ -48,6 +112,8 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
         cashString.isNotEmpty &&
         giftname.isNotEmpty &&
         giftpic != null) {
+      showLoadingDialog(); // Show the loading dialog
+
       UploadTask uploadTask = FirebaseStorage.instance
           .ref()
           .child("giftpictures")
@@ -63,14 +129,20 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
         "giftpic": downloadUrl,
       };
       FirebaseFirestore.instance.collection("Gifts").add(giftData);
-      log('data Uploaded');
+
+      setState(() {
+        isUploading = false;
+        giftpic = null;
+      });
+
+      Navigator.pop(context); // Hide the loading dialog
+      showSuccessDialog(); // Show the success dialog
     } else {
       log('fill data');
+      setState(() {
+        isUploading = false;
+      });
     }
-
-    setState(() {
-      giftpic = null;
-    });
   }
 
   @override
@@ -168,13 +240,14 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
                       decoration: InputDecoration(
                         labelText: 'Enter Points as Prize',
                         labelStyle: const TextStyle(
-                            color: Color.fromARGB(255, 70, 63, 60)),
+                          color: Color.fromARGB(255, 70, 63, 60),
+                        ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide:
                               const BorderSide(width: 3, color: Colors.white),
                         ),
-                        focusedBorder: const OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 3,
                             color: Color.fromARGB(255, 70, 63, 60),
@@ -182,6 +255,7 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
                         ),
                       ),
                       keyboardType: TextInputType.number,
+                      enabled: !isUploading,
                     ),
                   ),
                   Padding(
@@ -195,19 +269,21 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
                         counter: const Offstage(),
                         labelText: 'Enter Gift Name',
                         labelStyle: const TextStyle(
-                            color: Color.fromARGB(255, 70, 63, 60)),
+                          color: Color.fromARGB(255, 70, 63, 60),
+                        ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide:
                               const BorderSide(width: 3, color: Colors.white),
                         ),
-                        focusedBorder: const OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 3,
                             color: Color.fromARGB(255, 70, 63, 60),
                           ),
                         ),
                       ),
+                      enabled: !isUploading,
                     ),
                   ),
                   Padding(
@@ -219,13 +295,14 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
                       decoration: InputDecoration(
                         labelText: 'Enter Cash Prize',
                         labelStyle: const TextStyle(
-                            color: Color.fromARGB(255, 70, 63, 60)),
+                          color: Color.fromARGB(255, 70, 63, 60),
+                        ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide:
                               const BorderSide(width: 3, color: Colors.white),
                         ),
-                        focusedBorder: const OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 3,
                             color: Color.fromARGB(255, 70, 63, 60),
@@ -233,6 +310,7 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
                         ),
                       ),
                       keyboardType: TextInputType.number,
+                      enabled: !isUploading,
                     ),
                   ),
                   Align(
@@ -246,7 +324,9 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 7.0),
+                            horizontal: 20.0,
+                            vertical: 7.0,
+                          ),
                           backgroundColor:
                               const Color.fromARGB(255, 70, 63, 60),
                           shape: const StadiumBorder(),
