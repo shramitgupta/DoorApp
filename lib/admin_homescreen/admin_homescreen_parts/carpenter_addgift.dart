@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_editgift.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -333,6 +334,36 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
                         ),
                         child: const Text(
                           "Upload",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      margin: const EdgeInsets.all(10),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CarpenterEditGifts(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0,
+                            vertical: 7.0,
+                          ),
+                          backgroundColor:
+                              const Color.fromARGB(255, 70, 63, 60),
+                          shape: const StadiumBorder(),
+                        ),
+                        child: const Text(
+                          "Delete Upload",
                           style: TextStyle(color: Colors.white, fontSize: 18),
                         ),
                       ),
