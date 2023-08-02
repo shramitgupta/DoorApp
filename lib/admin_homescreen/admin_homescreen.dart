@@ -4,7 +4,7 @@ import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_delete
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_details.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_giftrequest.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_leaderboard.dart';
-import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_regester.dart';
+import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_register.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_totalgifts.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_whattosend.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_qr_generator.dart';
