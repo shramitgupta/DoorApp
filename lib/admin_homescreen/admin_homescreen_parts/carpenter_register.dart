@@ -29,7 +29,7 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
   String? _verificationId; // Store the verification ID for OTP verification
   bool isLoading = false;
   String? cmaritalstatus; // Track the marital status
-
+  String? m = 'NA';
   @override
   void initState() {
     super.initState();
@@ -182,9 +182,43 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
         "cprofilepic": downloadUrl,
         "cdob": cdob,
         "points": points,
+        "canniversarydate": m,
       };
 
+      String existingAnniversaryDate = carpenterData["canniversarydate"] ??
+          ''; // Get the existing anniversary date from the document
+
       if (cmaritalstatus == 'Married') {
+        if (canniversarydateController!.text == existingAnniversaryDate) {
+          // If "Anniversary Date" is the same as the existing value, ask for confirmation.
+          bool updateConfirmation = await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Confirm Update'),
+                content: Text(
+                  'The selected Anniversary Date is the same as the existing one. Do you want to update it?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text('Yes'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text('No'),
+                  ),
+                ],
+              );
+            },
+          );
+
+          if (updateConfirmation != true) {
+            // If the user does not confirm the update, set "Anniversary Date" to the existing value.
+            canniversarydateController!.text = existingAnniversaryDate;
+          }
+        }
+
         carpenterData["canniversarydate"] = canniversarydateController!.text;
       }
 
@@ -451,6 +485,7 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: DropdownButtonFormField<String>(
+                        
                         value: cmaritalstatus,
                         onChanged: (newValue) {
                           setState(() {

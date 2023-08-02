@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_gifthistory.dart';
 import 'package:flutter/material.dart';
 
 class CarpenterTotalGifts extends StatefulWidget {
@@ -125,6 +126,31 @@ class BalanceModel extends StatelessWidget {
           child: AnimatedCounter(
             count: value,
             decimal: decimal,
+          ),
+        ),
+        const SizedBox(height: 100),
+        Container(
+          height: 45,
+          width: MediaQuery.of(context).size.width * 0.9,
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 70, 63, 60),
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: MaterialButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const CarpenterGiftHistory()),
+              );
+            },
+            child: const Text(
+              'Gift History',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
           ),
         ),
       ],

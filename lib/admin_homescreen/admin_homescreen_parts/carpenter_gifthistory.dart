@@ -1,23 +1,24 @@
 import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import the intl package for date formatting
+import 'package:intl/intl.dart';
 
-class UserPointsUsedHistory extends StatefulWidget {
-  const UserPointsUsedHistory({Key? key}) : super(key: key);
+class CarpenterGiftHistory extends StatefulWidget {
+  const CarpenterGiftHistory({super.key});
 
   @override
-  State<UserPointsUsedHistory> createState() => _UserPointsUsedHistoryState();
+  State<CarpenterGiftHistory> createState() => _CarpenterGiftHistoryState();
 }
 
-class _UserPointsUsedHistoryState extends State<UserPointsUsedHistory> {
+class _CarpenterGiftHistoryState extends State<CarpenterGiftHistory> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    String? currentUserId = FirebaseAuth.instance.currentUser?.uid;
-    log(currentUserId.toString());
+    String app = 'approved';
+    //log(currentUserId.toString());
 
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +34,7 @@ class _UserPointsUsedHistoryState extends State<UserPointsUsedHistory> {
         ),
         backgroundColor: const Color.fromARGB(255, 70, 63, 60),
         title: const Text(
-          'POINTS USED HISTORY',
+          'GIFT HISTORY',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
@@ -53,17 +54,16 @@ class _UserPointsUsedHistoryState extends State<UserPointsUsedHistory> {
             child: FutureBuilder<QuerySnapshot?>(
               future: FirebaseFirestore.instance
                   .collection("giftasked")
-                  .where('userid', isEqualTo: currentUserId)
-                  .orderBy("timestamp", descending: true)
+                  .where('status', isEqualTo: app)
                   .get(),
               builder: (context, snapshot) {
                 log(snapshot.data.toString());
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text("No data"));
+                  return const Center(child: Text("No data"));
                 }
 
                 return ListView.builder(
@@ -92,6 +92,14 @@ class _UserPointsUsedHistoryState extends State<UserPointsUsedHistory> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
+                            Text(
+                              "Name:  ${document["name"]}", // Display the formatted time
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white, // Set text color to white
+                              ),
+                            ),
                             Text(
                               "Date & Time: $formattedTime", // Display the formatted time
                               style: TextStyle(
