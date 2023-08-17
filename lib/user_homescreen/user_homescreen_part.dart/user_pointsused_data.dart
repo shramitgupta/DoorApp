@@ -24,77 +24,75 @@ class _UserPointsUsedHistoryState extends State<UserPointsUsedHistory> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
           'POINTS USED HISTORY',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
       ),
       body: Container(
-        color: const Color.fromARGB(255, 70, 63, 60),
+        color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            color: Colors
-                .white, // Changed to white for the main container background
-            child: FutureBuilder<QuerySnapshot?>(
-              future: FirebaseFirestore.instance
-                  .collection("giftasked")
-                  .where('userid', isEqualTo: currentUserId)
-                  .orderBy("timestamp", descending: true)
-                  .get(),
-              builder: (context, snapshot) {
-                log(snapshot.data.toString());
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
+          padding: const EdgeInsets.all(8.0),
+          child: FutureBuilder<QuerySnapshot?>(
+            future: FirebaseFirestore.instance
+                .collection("giftasked")
+                .where('userid', isEqualTo: currentUserId)
+                .orderBy("timestamp", descending: true)
+                .get(),
+            builder: (context, snapshot) {
+              log(snapshot.data.toString());
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text("No data"));
-                }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(child: Text("No data"));
+              }
 
-                return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot document = snapshot.data!.docs[index];
-                    log(document.toString());
-                    DateTime dateTime =
-                        (document["timestamp"] as Timestamp).toDate();
-                    // Format the DateTime to display in hours and minutes
-                    String formattedTime =
-                        DateFormat('dd MMM yyyy, HH:mm').format(dateTime);
+              return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot document = snapshot.data!.docs[index];
+                  log(document.toString());
+                  DateTime dateTime =
+                      (document["timestamp"] as Timestamp).toDate();
+                  // Format the DateTime to display in hours and minutes
+                  String formattedTime =
+                      DateFormat('dd MMM yyyy, HH:mm').format(dateTime);
 
-                    return ListTile(
-                      title: Container(
-                        margin: EdgeInsets.symmetric(
-                          //vertical: 10,
-                          vertical: screenHeight * 0.01,
-                          horizontal: screenWidth * 0.001,
-                          //horizontal: 20,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 195, 162, 132),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
+                  return ListTile(
+                    title: Container(
+                      margin: EdgeInsets.symmetric(
+                        //vertical: 10,
+                        vertical: screenHeight * 0.01,
+                        horizontal: screenWidth * 0.001,
+                        //horizontal: 20,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.brown.shade900,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
                               "Date & Time: $formattedTime", // Display the formatted time
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white, // Set text color to white
                               ),
@@ -116,11 +114,11 @@ class _UserPointsUsedHistoryState extends State<UserPointsUsedHistory> {
                           ],
                         ),
                       ),
-                    );
-                  },
-                );
-              },
-            ),
+                    ),
+                  );
+                },
+              );
+            },
           ),
         ),
       ),

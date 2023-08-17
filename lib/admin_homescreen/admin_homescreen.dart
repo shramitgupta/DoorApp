@@ -29,6 +29,7 @@ List button = [
   'Total Gifts Sent',
   'Add Gifts',
   'Delete Carpenter',
+  'LOGOUT'
 ];
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
@@ -41,137 +42,135 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.notifications_none,
-            color: Color.fromARGB(255, 195, 162, 132),
-            size: 35,
-          ),
-          onPressed: () {},
-        ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
           'ADMIN HOME',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.logout_sharp,
-              color: Color.fromARGB(255, 195, 162, 132),
-              size: 35,
-            ),
-            onPressed: () {
-              logOut();
-            },
-          )
-        ],
       ),
       body: Container(
-        color: const Color.fromARGB(255, 70, 63, 60),
-        child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Container(
-            color: const Color.fromARGB(255, 195, 162, 132),
-            child: ListView.builder(
-                itemCount: button.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    onTap: () {
-                      if (index == 0) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CarpenterRegister(),
-                          ),
-                        );
-                      } else if (index == 1) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => QrGenerator(),
-                          ),
-                        );
-                      } else if (index == 2) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CarpenterDetails(),
-                          ),
-                        );
-                      } else if (index == 3) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CarpenterLeaderBoard(),
-                          ),
-                        );
-                      } else if (index == 4) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CarpenterGiftRequest(),
-                          ),
-                        );
-                      } else if (index == 5) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CarpenterWhatToSend(),
-                          ),
-                        );
-                      } else if (index == 6) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CarpenterTotalGifts(),
-                          ),
-                        );
-                      } else if (index == 7) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CarpenterAddGifts(),
-                          ),
-                        );
-                      } else if (index == 8) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CarpenterDelete(),
-                          ),
-                        );
-                      }
-                    },
-                    title: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 15),
-                      child: Container(
-                        color: const Color.fromARGB(255, 70, 63, 60),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              button[index],
-                              style: const TextStyle(
-                                fontSize: 25,
-                                color: Color.fromARGB(255, 195, 162, 132),
+        color: Colors.white,
+        child: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                    itemCount: button.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        onTap: () {
+                          if (index == 0) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CarpenterRegister(),
+                              ),
+                            );
+                          } else if (index == 1) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => QrGenerator(),
+                              ),
+                            );
+                          } else if (index == 2) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CarpenterDetails(),
+                              ),
+                            );
+                          } else if (index == 3) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CarpenterLeaderBoard(),
+                              ),
+                            );
+                          } else if (index == 4) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CarpenterGiftRequest(),
+                              ),
+                            );
+                          } else if (index == 5) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CarpenterWhatToSend(),
+                              ),
+                            );
+                          } else if (index == 6) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CarpenterTotalGifts(),
+                              ),
+                            );
+                          } else if (index == 7) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CarpenterAddGifts(),
+                              ),
+                            );
+                          } else if (index == 8) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CarpenterDelete(),
+                              ),
+                            );
+                          } else if (index == 9) {
+                            logOut();
+                          }
+                        },
+                        title: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 15),
+                          child: Container(
+                            color: Colors.brown.shade900,
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Text(
+                                  button[index],
+                                  style: const TextStyle(
+                                    fontSize: 25,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                }),
-          ),
+                      );
+                    }),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: Image.asset(
+                'images/logo.png',
+                height: screenHeight * 0.12,
+                //width: 30,
+              ),
+            ),
+          ],
         ),
       ),
     );

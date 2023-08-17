@@ -44,20 +44,20 @@ class _UserQrScannerState extends State<UserQrScanner> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
           'QR SCANNER',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
@@ -69,7 +69,7 @@ class _UserQrScannerState extends State<UserQrScanner> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 // child: ElevatedButton(
                 //   onPressed: () {
                 //     // You can handle button tap here
@@ -85,7 +85,7 @@ class _UserQrScannerState extends State<UserQrScanner> {
               padding: const EdgeInsets.only(bottom: 80.0),
               child: Text(
                 'Scanned Points: $_scannedPoints\nQR ID: $_qrId',
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),

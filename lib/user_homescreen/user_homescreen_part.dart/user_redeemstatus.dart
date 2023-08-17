@@ -34,18 +34,18 @@ class _UserRedeemStatusState extends State<UserRedeemStatus> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
           'STATUS',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
@@ -67,7 +67,7 @@ class _UserRedeemStatusState extends State<UserRedeemStatus> {
                   return ListTile(
                     title: Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey,
+                        color: Colors.brown.shade200,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
@@ -208,7 +208,14 @@ class _UserRedeemStatusState extends State<UserRedeemStatus> {
                 },
               );
             } else {
-              return Text("No data");
+              return Center(
+                child: Container(
+                    decoration: new BoxDecoration(
+                        image: new DecorationImage(
+                  image: new AssetImage("images/gift.png"),
+                  //fit: BoxFit.fill,
+                ))),
+              );
             }
           } else if (snapshot.hasError) {
             return Text("Error: ${snapshot.error}");

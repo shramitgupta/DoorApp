@@ -14,6 +14,7 @@ class UserTotalPoints extends StatefulWidget {
 class _UserTotalPointsState extends State<UserTotalPoints> {
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     String? currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
     return Scaffold(
@@ -21,111 +22,120 @@ class _UserTotalPointsState extends State<UserTotalPoints> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
           'TOTAL POINTS',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
       ),
       body: Container(
-        color: const Color.fromARGB(255, 70, 63, 60),
-        child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            color: const Color.fromARGB(255, 195, 162, 132),
-            child: StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("carpenterData")
-                  .doc(currentUserId)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Material(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
+        width: double.infinity,
+        color: Colors.white,
+        child: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("carpenterData")
+              .doc(currentUserId)
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Material(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
 
-                int totalPoints = snapshot.data?.get('points') ?? 0;
+            int totalPoints = snapshot.data?.get('points') ?? 0;
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    BalanceModel(
-                      label: 'total Points',
-                      value: totalPoints,
-                      decimal: 2,
-                    ),
-                    const SizedBox(height: 100),
-                    Container(
-                      height: 45,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 70, 63, 60),
-                        borderRadius: BorderRadius.circular(25),
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Updated
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      BalanceModel(
+                        label: 'total Points',
+                        value: totalPoints,
+                        decimal: 2,
                       ),
-                      child: MaterialButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const UserGiftDetails()),
-                          );
-                        },
-                        child: const Text(
-                          'Use the Points',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
+                      const SizedBox(height: 100),
+                      Container(
+                        height: 45,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        decoration: BoxDecoration(
+                          color: Colors.brown.shade900,
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: MaterialButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const UserGiftDetails()),
+                            );
+                          },
+                          child: const Text(
+                            'Use the Points',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 60),
-                    Container(
-                      height: 45,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 70, 63, 60),
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: MaterialButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UserPointsHistory()),
-                          );
-                        },
-                        child: const Text(
-                          'Points History',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
+                      const SizedBox(height: 60),
+                      Container(
+                        height: 45,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        decoration: BoxDecoration(
+                          color: Colors.brown.shade900,
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: MaterialButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UserPointsHistory()),
+                            );
+                          },
+                          child: const Text(
+                            'Points History',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Image.asset(
+                    'images/logo.png',
+                    height: screenHeight * 0.2,
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

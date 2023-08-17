@@ -19,161 +19,165 @@ class _UserLeaderBoardState extends State<UserLeaderBoard> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
           'LEADERBOARD',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
       ),
       body: Container(
-        color: const Color.fromARGB(255, 70, 63, 60),
+        color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            color: const Color.fromARGB(255, 195, 162, 132),
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("carpenterData")
-                  .orderBy("points",
-                      descending:
-                          true) // <-- Order by points in ascending order
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        DocumentSnapshot document = snapshot.data!.docs[index];
+          padding: const EdgeInsets.all(8.0),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection("carpenterData")
+                .orderBy("points",
+                    descending: true) // <-- Order by points in ascending order
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      DocumentSnapshot document = snapshot.data!.docs[index];
 
-                        return ListTile(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CarpenterProfile(
-                                  pic: document["cprofilepic"],
-                                  address: document["caddress"],
-                                  age: document["cage"].toString(),
-                                  annaversary: document["canniversarydate"],
-                                  dob: document["cdob"],
-                                  name: document["cname"],
-                                  phoneno: document["cpno"].toString(),
-                                  status: document["cmaritalstatus"],
-                                ),
-                              ),
-                            );
-                          },
-                          title: Container(
-                            margin: EdgeInsets.symmetric(
-                              //vertical: 10,
-                              vertical: screenHeight * 0.01,
-                              horizontal: screenWidth * 0.001,
-                              //horizontal: 20,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Stack(
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    Positioned(
-                                      top: screenHeight * 0.01,
-                                      // bottom: -50.w,
-                                      left: screenHeight * 0.01,
-                                      right: 0,
-                                      child: Container(
-                                        constraints: BoxConstraints(
-                                          //maxHeight: 60,
-                                          maxHeight: screenHeight * 0.06,
-                                        ),
-                                        padding: EdgeInsets.only(
-                                          //top: 20,
-                                          top: screenHeight * 0.022,
-                                          //bottom: 10,
-                                          bottom: screenHeight * 0.01,
-                                          //left: 170,
-                                          left: screenWidth * 0.2,
-                                        ),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Name: ${document["cname"]}",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              "Points: ${document["points"]}",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            SizedBox(
-                                              //height: 5,
-                                              width: screenWidth * 0.01,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Card(
-                                      elevation: 15,
-                                      margin: const EdgeInsets.only(left: 20),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      shadowColor: Colors.amber,
-                                      child: SizedBox(
-                                        //height: 50,
-                                        height: screenHeight * 0.057,
-                                        //width: 50,
-                                        width: screenWidth * 0.12,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          child: Image.network(
-                                            document["cprofilepic"],
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                      return ListTile(
+                        // onTap: () {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => CarpenterProfile(
+                        //         pic: document["cprofilepic"],
+                        //         address: document["caddress"],
+                        //         age: document["cage"].toString(),
+                        //         annaversary: document["canniversarydate"],
+                        //         dob: document["cdob"],
+                        //         name: document["cname"],
+                        //         phoneno: document["cpno"].toString(),
+                        //         status: document["cmaritalstatus"],
+                        //       ),
+                        //     ),
+                        //   );
+                        // },
+                        title: Container(
+                          margin: EdgeInsets.symmetric(
+                            //vertical: 10,
+                            vertical: screenHeight * 0.01,
+                            horizontal: screenWidth * 0.001,
+                            //horizontal: 20,
                           ),
-                        );
-                      },
-                    );
-                  } else {
-                    return Text("No data");
-                  }
-                } else if (snapshot.hasError) {
-                  return Text("Error: ${snapshot.error}");
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Positioned(
+                                    top: screenHeight * 0.01,
+                                    // bottom: -50.w,
+                                    left: screenHeight * 0.01,
+                                    right: 0,
+                                    child: Container(
+                                      constraints: BoxConstraints(
+                                        //maxHeight: 60,
+                                        maxHeight: screenHeight * 0.06,
+                                      ),
+                                      padding: EdgeInsets.only(
+                                        //top: 20,
+                                        top: screenHeight * 0.022,
+                                        //bottom: 10,
+                                        bottom: screenHeight * 0.01,
+                                        //left: 170,
+                                        left: screenWidth * 0.2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                          color: Colors.brown.shade900,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Name: ${document["cname"]}",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            "Points: ${document["points"]}",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(
+                                            //height: 5,
+                                            width: screenWidth * 0.01,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Card(
+                                    elevation: 15,
+                                    margin: const EdgeInsets.only(left: 20),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    shadowColor: Colors.brown.shade900,
+                                    child: SizedBox(
+                                      //height: 50,
+                                      height: screenHeight * 0.057,
+                                      //width: 50,
+                                      width: screenWidth * 0.12,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: Image.network(
+                                          document["cprofilepic"],
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: Container(
+                        decoration: new BoxDecoration(
+                            image: new DecorationImage(
+                      image: new AssetImage("images/score.png"),
+                      //fit: BoxFit.fill,
+                    ))),
+                  );
                 }
-              },
-            ),
+              } else if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
           ),
         ),
       ),

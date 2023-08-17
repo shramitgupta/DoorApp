@@ -16,18 +16,18 @@ class _CarpenterWhatToSendState extends State<CarpenterWhatToSend> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color(0xFFC3A284),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: Color(0xFF463F3C),
+        backgroundColor: Colors.brown.shade900,
         title: Text(
           'WHAT TO SEND',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color(0xFFC3A284),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,

@@ -155,222 +155,219 @@ class _CarpenterAddGiftsState extends State<CarpenterAddGifts> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
-          'CARPENTER REGESTER',
+          'ADD GIFTS AND PRIZE ',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
       ),
       body: Container(
-        color: const Color.fromARGB(255, 70, 63, 60),
+        height: double.infinity,
+        color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            color: const Color.fromARGB(255, 195, 162, 132),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ListTile(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    _getImageFromSource(ImageSource.gallery);
-                                  },
-                                  leading: const Icon(Icons.photo_library),
-                                  title: const Text("Choose from Gallery"),
-                                ),
-                                ListTile(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    _getImageFromSource(ImageSource.camera);
-                                  },
-                                  leading: const Icon(Icons.camera_alt),
-                                  title: const Text("Take a Photo"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Container(
-                        //width: 100,
-                        width: screenWidth * 0.3,
-                        //height: 100,
-                        height: screenHeight * 0.15,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          image: (giftpic != null)
-                              ? DecorationImage(
-                                  image: FileImage(giftpic!),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: pointController,
-                      // style: const TextStyle(height: 30),
-                      cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                      decoration: InputDecoration(
-                        labelText: 'Enter Points as Prize',
-                        labelStyle: const TextStyle(
-                          color: Color.fromARGB(255, 70, 63, 60),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 3,
-                            color: Color.fromARGB(255, 70, 63, 60),
-                          ),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                      enabled: !isUploading,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      maxLength: 10,
-                      controller: giftController,
-                      // style: const TextStyle(height: 30),
-                      cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                      decoration: InputDecoration(
-                        counter: const Offstage(),
-                        labelText: 'Enter Gift Name',
-                        labelStyle: const TextStyle(
-                          color: Color.fromARGB(255, 70, 63, 60),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 3,
-                            color: Color.fromARGB(255, 70, 63, 60),
-                          ),
-                        ),
-                      ),
-                      enabled: !isUploading,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: cashController,
-                      // style: const TextStyle(height: 30),
-                      cursorColor: const Color.fromARGB(255, 70, 63, 60),
-                      decoration: InputDecoration(
-                        labelText: 'Enter Cash Prize',
-                        labelStyle: const TextStyle(
-                          color: Color.fromARGB(255, 70, 63, 60),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(width: 3, color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 3,
-                            color: Color.fromARGB(255, 70, 63, 60),
-                          ),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                      enabled: !isUploading,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      margin: const EdgeInsets.all(10),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          saveGift();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                            vertical: 7.0,
-                          ),
-                          backgroundColor:
-                              const Color.fromARGB(255, 70, 63, 60),
-                          shape: const StadiumBorder(),
-                        ),
-                        child: const Text(
-                          "Upload",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      margin: const EdgeInsets.all(10),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CarpenterEditGifts(),
-                            ),
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  _getImageFromSource(ImageSource.gallery);
+                                },
+                                leading: const Icon(Icons.photo_library),
+                                title: const Text("Choose from Gallery"),
+                              ),
+                              ListTile(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  _getImageFromSource(ImageSource.camera);
+                                },
+                                leading: const Icon(Icons.camera_alt),
+                                title: const Text("Take a Photo"),
+                              ),
+                            ],
                           );
                         },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                            vertical: 7.0,
-                          ),
-                          backgroundColor:
-                              const Color.fromARGB(255, 70, 63, 60),
-                          shape: const StadiumBorder(),
-                        ),
-                        child: const Text(
-                          "Delete Upload",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
+                      );
+                    },
+                    child: Container(
+                      //width: 100,
+                      width: screenWidth * 0.3,
+                      //height: 100,
+                      height: screenHeight * 0.15,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        image: (giftpic != null)
+                            ? DecorationImage(
+                                image: FileImage(giftpic!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        color: Colors.brown.shade200,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: pointController,
+                    // style: const TextStyle(height: 30),
+                    cursorColor: Colors.brown.shade900,
+                    decoration: InputDecoration(
+                      labelText: 'Enter Points as Prize',
+                      labelStyle: TextStyle(
+                        color: Colors.brown.shade900,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          width: 3,
+                          color: Colors.brown.shade900,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 3,
+                          color: Colors.brown.shade900,
+                        ),
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                    enabled: !isUploading,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    maxLength: 10,
+                    controller: giftController,
+                    // style: const TextStyle(height: 30),
+                    cursorColor: Colors.brown.shade900,
+                    decoration: InputDecoration(
+                      counter: const Offstage(),
+                      labelText: 'Enter Gift Name',
+                      labelStyle: TextStyle(
+                        color: Colors.brown.shade900,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide:
+                            BorderSide(width: 3, color: Colors.brown.shade900),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 3,
+                          color: Colors.brown.shade900,
+                        ),
+                      ),
+                    ),
+                    enabled: !isUploading,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: cashController,
+                    // style: const TextStyle(height: 30),
+                    cursorColor: Colors.brown.shade900,
+                    decoration: InputDecoration(
+                      labelText: 'Enter Cash Prize',
+                      labelStyle: TextStyle(
+                        color: Colors.brown.shade900,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide:
+                            BorderSide(width: 3, color: Colors.brown.shade900),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 3,
+                          color: Colors.brown.shade900,
+                        ),
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                    enabled: !isUploading,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        saveGift();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0,
+                          vertical: 7.0,
+                        ),
+                        backgroundColor: Colors.brown.shade900,
+                        shape: const StadiumBorder(),
+                      ),
+                      child: const Text(
+                        "Upload",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CarpenterEditGifts(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0,
+                          vertical: 7.0,
+                        ),
+                        backgroundColor: Colors.brown.shade900,
+                        shape: const StadiumBorder(),
+                      ),
+                      child: const Text(
+                        "Delete Upload",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

@@ -94,18 +94,18 @@ class _CarpenterEditGiftsState extends State<CarpenterEditGifts> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
           'DELETE GIFTS',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
@@ -113,7 +113,7 @@ class _CarpenterEditGiftsState extends State<CarpenterEditGifts> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: const Color.fromARGB(255, 195, 162, 132),
+        color: Colors.white,
         child: Column(
           children: [
             Expanded(
@@ -134,7 +134,7 @@ class _CarpenterEditGiftsState extends State<CarpenterEditGifts> {
                             title: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
-                                color: const Color.fromARGB(255, 237, 240, 225),
+                                color: Colors.brown.shade200,
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -205,7 +205,14 @@ class _CarpenterEditGiftsState extends State<CarpenterEditGifts> {
                         },
                       );
                     } else {
-                      return Text("No data");
+                      return Center(
+                        child: Container(
+                            decoration: new BoxDecoration(
+                                image: new DecorationImage(
+                          image: new AssetImage("images/gift.png"),
+                          //fit: BoxFit.fill,
+                        ))),
+                      );
                     }
                   } else if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");

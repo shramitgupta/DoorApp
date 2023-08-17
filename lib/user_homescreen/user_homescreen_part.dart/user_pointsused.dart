@@ -14,119 +14,131 @@ class UserPointsUsed extends StatefulWidget {
 class _UserPointsUsedState extends State<UserPointsUsed> {
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
-          'POINTS USERS',
+          'POINTS USED',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
       ),
       body: Container(
-        color: const Color.fromARGB(255, 70, 63, 60),
+        width: double.infinity,
+        color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            color: const Color.fromARGB(255, 195, 162, 132),
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('giftasked')
-                  .where('userid',
-                      isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Material(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-
-                double totalPoints = 0.0;
-                for (var item in snapshot.data!.docs) {
-                  totalPoints += item['points'];
-                }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    BalanceModel(
-                      label: 'Points Used',
-                      value: totalPoints,
-                      decimal: 0,
-                    ),
-                    const SizedBox(height: 100),
-                    Container(
-                      height: 45,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 70, 63, 60),
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: MaterialButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const UserGiftDetails()),
-                          );
-                        },
-                        child: const Text(
-                          'Use the Points',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 60),
-                    Container(
-                      height: 45,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 70, 63, 60),
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: MaterialButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const UserPointsUsedHistory()),
-                          );
-                        },
-                        child: const Text(
-                          'Points History',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+          padding: const EdgeInsets.all(8.0),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('giftasked')
+                .where('userid',
+                    isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                .snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Material(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 );
-              },
-            ),
+              }
+
+              double totalPoints = 0.0;
+              for (var item in snapshot.data!.docs) {
+                totalPoints += item['points'];
+              }
+              return Column(
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        BalanceModel(
+                          label: 'Points Used',
+                          value: totalPoints,
+                          decimal: 0,
+                        ),
+                        const SizedBox(height: 100),
+                        Container(
+                          height: 45,
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          decoration: BoxDecoration(
+                            color: Colors.brown.shade900,
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: MaterialButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const UserGiftDetails()),
+                              );
+                            },
+                            child: const Text(
+                              'Use the Points',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 60),
+                        Container(
+                          height: 45,
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          decoration: BoxDecoration(
+                            color: Colors.brown.shade900,
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: MaterialButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const UserPointsUsedHistory()),
+                              );
+                            },
+                            child: const Text(
+                              'Points History',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Image.asset(
+                      'images/logo.png',
+                      height: screenHeight * 0.2,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),

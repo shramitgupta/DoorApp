@@ -19,26 +19,36 @@ class _CarpenterDetailsState extends State<CarpenterDetails> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
           'CARPENTER DETAILS',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.filter_alt,
+              color: Colors.white,
+              size: 35,
+            ),
+            onPressed: () {},
+          )
+        ],
         centerTitle: true,
       ),
       body: Container(
-        color: const Color.fromARGB(255, 195, 162, 132),
+        color: Colors.white,
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection("carpenterData")
@@ -81,7 +91,7 @@ class _CarpenterDetailsState extends State<CarpenterDetails> {
                                       left: screenWidth * 0.4,
                                     ),
                                     decoration: BoxDecoration(
-                                        color: Colors.white,
+                                        color: Colors.brown.shade900,
                                         borderRadius:
                                             BorderRadius.circular(15)),
                                     child: Column(
@@ -91,6 +101,7 @@ class _CarpenterDetailsState extends State<CarpenterDetails> {
                                         Text(
                                           "Name: ${document["cname"]}",
                                           style: const TextStyle(
+                                              color: Colors.white,
                                               fontWeight: FontWeight.bold),
                                         ),
                                         // ignore: prefer_const_constructors
@@ -101,6 +112,7 @@ class _CarpenterDetailsState extends State<CarpenterDetails> {
                                         Text(
                                           "Phone No:${document["cpno"].toString()}",
                                           style: const TextStyle(
+                                              color: Colors.white,
                                               fontWeight: FontWeight.bold),
                                         ),
                                         SizedBox(
@@ -112,7 +124,12 @@ class _CarpenterDetailsState extends State<CarpenterDetails> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            const Text('ID:'),
+                                            Text(
+                                              'ID: ${document["cdob"].toString()}',
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                             CustomButton(
                                                 label: 'View Profile',
                                                 onPressed: () {

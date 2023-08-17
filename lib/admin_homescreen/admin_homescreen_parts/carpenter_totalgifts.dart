@@ -17,62 +17,58 @@ class _CarpenterTotalGiftsState extends State<CarpenterTotalGifts> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
           'TOTAL GIFT SENT',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
       ),
       body: Container(
         width: double.infinity,
-        color: const Color.fromARGB(255, 70, 63, 60),
+        color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Container(
-            // height: MediaQuery.of(context).size.height,
-            color: Color.fromARGB(255, 195, 162, 132),
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('giftasked')
-                  .where('status', isEqualTo: 'approved')
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Material(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-
-                double totalgifts = 0.0;
-                // ignore: unused_local_variable
-                for (var item in snapshot.data!.docs) {
-                  ++totalgifts;
-                }
-
-                return Center(
-                  child: BalanceModel(
-                    label: 'Total Gift Sent',
-                    value: totalgifts,
-                    decimal: 0,
+          padding: const EdgeInsets.all(8.0),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('giftasked')
+                .where('status', isEqualTo: 'approved')
+                .snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Material(
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
                 );
-              },
-            ),
+              }
+
+              double totalgifts = 0.0;
+              // ignore: unused_local_variable
+              for (var item in snapshot.data!.docs) {
+                ++totalgifts;
+              }
+
+              return Center(
+                child: BalanceModel(
+                  label: 'Total Gift Sent',
+                  value: totalgifts,
+                  decimal: 0,
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -133,7 +129,7 @@ class BalanceModel extends StatelessWidget {
           height: 45,
           width: MediaQuery.of(context).size.width * 0.9,
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 70, 63, 60),
+            color: Colors.brown.shade900,
             borderRadius: BorderRadius.circular(25),
           ),
           child: MaterialButton(
