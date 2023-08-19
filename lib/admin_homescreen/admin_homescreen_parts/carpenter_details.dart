@@ -89,227 +89,251 @@ class _CarpenterDetailsState extends State<CarpenterDetails> {
         ],
         centerTitle: true,
       ),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            Row(
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                DropdownButton<String>(
-                  value: selectedState,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedState = newValue!;
-                      selectedDistrict = "District";
-                    });
-                  },
-                  // Populate dropdown with state data
-                  items: maincateg.map((state) {
-                    return DropdownMenuItem<String>(
-                      value: state,
-                      child: Text(state),
-                    );
-                  }).toList(),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: selectedState,
+                    onChanged: (newValue) {
+                      setState(() {
+                        selectedState = newValue!;
+                        selectedDistrict = "District";
+                      });
+                    },
+                    items: maincateg.map((state) {
+                      return DropdownMenuItem<String>(
+                        value: state,
+                        child: Text(state),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Select State',
+                      labelStyle: TextStyle(color: Colors.brown.shade900),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide:
+                            BorderSide(width: 3, color: Colors.brown.shade900),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(width: 3, color: Colors.brown.shade900),
+                      ),
+                    ),
+                  ),
                 ),
-                DropdownButton<String>(
-                  value: selectedDistrict,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedDistrict = newValue!;
-                    });
-                  },
-                  // Populate dropdown with district data
-                  items: selectedState == "Select State"
-                      ? []
-                      : getDistrictList(selectedState).map((district) {
-                          return DropdownMenuItem<String>(
-                            value: district,
-                            child: Text(district),
-                          );
-                        }).toList(),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: selectedDistrict,
+                    onChanged: (newValue) {
+                      setState(() {
+                        selectedDistrict = newValue!;
+                      });
+                    },
+                    items: selectedState == "Select State"
+                        ? []
+                        : getDistrictList(selectedState).map((district) {
+                            return DropdownMenuItem<String>(
+                              value: district,
+                              child: Text(district),
+                            );
+                          }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Select District',
+                      labelStyle: TextStyle(color: Colors.brown.shade900),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide:
+                            BorderSide(width: 3, color: Colors.brown.shade900),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(width: 3, color: Colors.brown.shade900),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection("carpenterData")
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.connectionState == ConnectionState.active) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          DocumentSnapshot document =
-                              snapshot.data!.docs[index];
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("carpenterData")
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    return ListView.builder(
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        DocumentSnapshot document = snapshot.data!.docs[index];
 
-                          // Check if data matches selected state and district
-                          if ((selectedState == "Select State" ||
-                                  document["state"] == selectedState) &&
-                              (selectedDistrict == "District" ||
-                                  document["district"] == selectedDistrict)) {
-                            // Show the ListTile
-                            return ListTile(
-                              title: Container(
-                                margin: EdgeInsets.symmetric(
-                                    vertical: screenHeight * 0.01,
-                                    horizontal: screenWidth * 0.0),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Stack(
-                                      clipBehavior: Clip.none,
-                                      children: [
-                                        Positioned(
-                                          top: screenHeight * 0.056,
-                                          // bottom: -50.w,
-                                          left: 0,
-                                          right: 0,
-                                          child: Container(
-                                            constraints: BoxConstraints(
-                                              //maxHeight: 110,
-                                              maxHeight: screenHeight * 0.124,
-                                            ),
-                                            padding: EdgeInsets.only(
-                                              //top: 20,
-                                              top: screenHeight * 0.01,
-                                              //bottom: 10,
-                                              bottom: screenHeight * 0.01,
-                                              //left: 170,
-                                              left: screenWidth * 0.4,
-                                            ),
-                                            decoration: BoxDecoration(
-                                                color: Colors.brown.shade900,
-                                                borderRadius:
-                                                    BorderRadius.circular(15)),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "Name: ${document["cname"]}",
-                                                  style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                // ignore: prefer_const_constructors
-                                                SizedBox(
-                                                  //height: 5,
-                                                  height: screenHeight * 0.005,
-                                                ),
-                                                Text(
-                                                  "Phone No:${document["cpno"].toString()}",
-                                                  style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                SizedBox(
-                                                  height: screenHeight * 0.005,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      'ID: ${document["cdob"].toString()}',
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    CustomButton(
-                                                        label: 'View Profile',
-                                                        onPressed: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  CarpenterProfile(
-                                                                pic: document[
-                                                                    "cprofilepic"],
-                                                                address: document[
-                                                                    "caddress"],
-                                                                age: document[
-                                                                        "cage"]
-                                                                    .toString(),
-                                                                annaversary:
-                                                                    document[
-                                                                        "canniversarydate"],
-                                                                dob: document[
-                                                                    "cdob"],
-                                                                name: document[
-                                                                    "cname"],
-                                                                phoneno: document[
-                                                                        "cpno"]
-                                                                    .toString(),
-                                                                status: document[
-                                                                    "cmaritalstatus"],
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }),
-                                                  ],
-                                                )
-                                              ],
-                                            ),
+                        // Check if data matches selected state and district
+                        if ((selectedState == "Select State" ||
+                                document["state"] == selectedState) &&
+                            (selectedDistrict == "District" ||
+                                document["district"] == selectedDistrict)) {
+                          // Show the ListTile
+                          return ListTile(
+                            title: Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: screenHeight * 0.01,
+                                  horizontal: screenWidth * 0.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Positioned(
+                                        top: screenHeight * 0.056,
+                                        // bottom: -50.w,
+                                        left: 0,
+                                        right: 0,
+                                        child: Container(
+                                          constraints: BoxConstraints(
+                                            //maxHeight: 110,
+                                            maxHeight: screenHeight * 0.124,
                                           ),
-                                        ),
-                                        Card(
-                                          elevation: 15,
-                                          margin:
-                                              const EdgeInsets.only(left: 20),
-                                          shape: RoundedRectangleBorder(
+                                          padding: EdgeInsets.only(
+                                            //top: 20,
+                                            top: screenHeight * 0.01,
+                                            //bottom: 10,
+                                            bottom: screenHeight * 0.01,
+                                            //left: 170,
+                                            left: screenWidth * 0.4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                              color: Colors.brown.shade900,
                                               borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          shadowColor: Colors.amber,
-                                          child: SizedBox(
-                                            //height: 150,
-                                            height: screenHeight * 0.16,
-                                            //width: 120,
-                                            width: screenWidth * 0.3,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              child: Image.network(
-                                                document["cprofilepic"],
-                                                fit: BoxFit.cover,
+                                                  BorderRadius.circular(15)),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Name: ${document["cname"]}",
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
+                                              // ignore: prefer_const_constructors
+                                              SizedBox(
+                                                //height: 5,
+                                                height: screenHeight * 0.005,
+                                              ),
+                                              Text(
+                                                "Phone No:${document["cpno"].toString()}",
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              SizedBox(
+                                                height: screenHeight * 0.005,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'ID: ${document["cdob"].toString()}',
+                                                    style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  CustomButton(
+                                                      label: 'View Profile',
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                CarpenterProfile(
+                                                              pic: document[
+                                                                  "cprofilepic"],
+                                                              address: document[
+                                                                  "caddress"],
+                                                              age: document[
+                                                                      "cage"]
+                                                                  .toString(),
+                                                              annaversary: document[
+                                                                  "canniversarydate"],
+                                                              dob: document[
+                                                                  "cdob"],
+                                                              name: document[
+                                                                  "cname"],
+                                                              phoneno: document[
+                                                                      "cpno"]
+                                                                  .toString(),
+                                                              status: document[
+                                                                  "cmaritalstatus"],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Card(
+                                        elevation: 15,
+                                        margin: const EdgeInsets.only(left: 20),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        shadowColor: Colors.amber,
+                                        child: SizedBox(
+                                          //height: 150,
+                                          height: screenHeight * 0.16,
+                                          //width: 120,
+                                          width: screenWidth * 0.3,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: Image.network(
+                                              document["cprofilepic"],
+                                              fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    )
-                                  ],
-                                ),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
-                            );
-                          } else {
-                            // Return an empty container when data doesn't match filters
-                            return Container();
-                          }
-                        },
-                      );
-                    } else {
-                      return const Text("No data");
-                    }
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
+                            ),
+                          );
+                        } else {
+                          // Return an empty container when data doesn't match filters
+                          return Container();
+                        }
+                      },
+                    );
                   } else {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Text("No data");
                   }
-                },
-              ),
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
