@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doorapp/auth/user_auth/user_phoneno_login.dart';
 import 'package:doorapp/auth/admin_auth/admin_otp_login.dart';
@@ -38,6 +40,21 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
     }
   }
 
+  Future<void> logAdminCollection() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('Admin').get();
+
+      for (QueryDocumentSnapshot document in querySnapshot.docs) {
+        log('Admin Document ID: ${document.id}');
+        log('Contact Number: ${document['contactNumber']}');
+        // Log other fields as needed
+      }
+    } catch (e) {
+      log('Error logging admin collection: $e');
+    }
+  }
+
   Future<bool> checkIfPhoneNumberExists(String phoneNumber) async {
     String phoneString = _contactNumberController.text.trim();
     int phone = int.parse(phoneString);
@@ -46,9 +63,12 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
           .collection('Admin')
           .where('contactNumber', isEqualTo: phone)
           .get();
+      //log('hi');
 
+      // log(FirebaseFirestore.instance.collection('Admin').get().toString());
       return querySnapshot.docs.isNotEmpty;
     } catch (e) {
+      print('Error in checkIfPhoneNumberExists: $e');
       return false;
     }
   }
@@ -227,6 +247,7 @@ class _AdminPhoneNoLoginState extends State<AdminPhoneNoLogin> {
                       ),
                     ),
                     onPressed: () {
+                      logAdminCollection();
                       Navigator.push(
                         context,
                         MaterialPageRoute(

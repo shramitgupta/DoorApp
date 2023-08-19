@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doorapp/admin_homescreen/admin_homescreen_parts/state_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,10 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
   bool isLoading = false;
   String? cmaritalstatus; // Track the marital status
   String? m = 'NA';
+  String mainCategValue = 'Select State';
+  String subCategValue = 'District';
+
+  List<String> subCategList = [];
   @override
   void initState() {
     super.initState();
@@ -51,6 +56,10 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
     }
   }
 
+  bool isStateDistrictSelected() {
+    return mainCategValue != 'Select State' && subCategValue != 'District';
+  }
+
   bool areAllFieldsFilled() {
     return cnameController.text.isNotEmpty &&
         cpnoController.text.isNotEmpty &&
@@ -59,7 +68,8 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
         cdobController.text.isNotEmpty &&
         (cmaritalstatus != 'Married' ||
             canniversarydateController!.text.isNotEmpty) &&
-        cprofilepic != null;
+        cprofilepic != null &&
+        isStateDistrictSelected(); // Check if state and district are selected
   }
 
   // Function to send OTP to the user's phone number
@@ -194,6 +204,8 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
         "cdob": cdob,
         "points": points,
         "canniversarydate": m,
+        "state": mainCategValue,
+        "district": subCategValue,
       };
 
       String existingAnniversaryDate = carpenterData["canniversarydate"] ??
@@ -267,6 +279,8 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
       cdobController.clear();
       canniversarydateController?.clear();
       cprofilepic = null;
+      mainCategValue = 'Select State';
+      subCategValue = 'District';
     });
   }
 
@@ -300,6 +314,74 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
             "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
       });
     }
+  }
+
+  void selectedMainCateg(String? value) {
+    if (value == 'Select State') {
+      subCategList = [];
+    } else if (value == 'Andhra Pradesh') {
+      subCategList = AndhraPradesh;
+    } else if (value == 'Arunachal Pradesh') {
+      subCategList = ArunachalPradesh;
+    } else if (value == 'Assam') {
+      subCategList = Assam;
+    } else if (value == 'Gujarat') {
+      subCategList = Gujarat;
+    } else if (value == 'Bihar') {
+      subCategList = Bihar;
+    } else if (value == 'Chhattisgarh') {
+      subCategList = Chhattisgarh;
+    } else if (value == 'Goa') {
+      subCategList = Goa;
+    } else if (value == 'Haryana') {
+      subCategList = Haryana;
+    } else if (value == 'Himachal Pradesh') {
+      subCategList = HimachalPradesh;
+    } else if (value == 'Jharkhand') {
+      subCategList = Jharkhand;
+    } else if (value == 'Karnataka') {
+      subCategList = Karnataka;
+    } else if (value == 'Kerala') {
+      subCategList = Kerala;
+    } else if (value == 'Madhya Pradesh') {
+      subCategList = MadhyaPradesh;
+    } else if (value == 'Maharashtra') {
+      subCategList = Maharashtra;
+    } else if (value == 'Manipur') {
+      subCategList = Manipur;
+    } else if (value == 'Meghalaya') {
+      subCategList = Meghalaya;
+    } else if (value == 'Mizoram') {
+      subCategList = Mizoram;
+    } else if (value == 'Nagaland') {
+      subCategList = Nagaland;
+    } else if (value == 'Orissa') {
+      subCategList = Orissa;
+    } else if (value == 'Punjab') {
+      subCategList = Punjab;
+    } else if (value == 'Rajasthan') {
+      subCategList = Rajasthan;
+    } else if (value == 'Sikkim') {
+      subCategList = Sikkim;
+    } else if (value == 'Tamil Nadu') {
+      subCategList = TamilNadu;
+    } else if (value == 'Telangana') {
+      subCategList = Telangana;
+    } else if (value == 'Tripura') {
+      subCategList = Tripura;
+    } else if (value == 'Uttar Pradesh') {
+      subCategList = UttarPradesh;
+    } else if (value == 'Uttarakhand') {
+      subCategList = Uttarakhand;
+    } else if (value == 'West Bengal') {
+      subCategList = WestBengal;
+    }
+
+    print(value);
+    setState(() {
+      mainCategValue = value!;
+      subCategValue = 'District';
+    });
   }
 
   @override
@@ -413,6 +495,7 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      keyboardType: TextInputType.phone,
                       maxLength: 10,
                       controller: cpnoController,
                       enabled:
@@ -431,6 +514,70 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                           borderSide: BorderSide(
                               width: 3, color: Colors.brown.shade900),
                         ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownButtonFormField<String>(
+                      value: mainCategValue,
+                      onChanged: (String? value) {
+                        selectedMainCateg(value);
+                      },
+                      items: maincateg.map<DropdownMenuItem<String>>((value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                          enabled: !isLoading,
+                        );
+                      }).toList(),
+                      decoration: InputDecoration(
+                        labelText: 'Select State',
+                        labelStyle: TextStyle(color: Colors.brown.shade900),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                              width: 3, color: Colors.brown.shade900),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 3, color: Colors.brown.shade900),
+                        ),
+                        enabled: !isLoading,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownButtonFormField<String>(
+                      value: subCategValue,
+                      onChanged: (String? value) {
+                        print(value);
+                        setState(() {
+                          subCategValue = value!;
+                        });
+                      },
+                      items:
+                          subCategList.map<DropdownMenuItem<String>>((value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                          enabled: !isLoading,
+                        );
+                      }).toList(),
+                      decoration: InputDecoration(
+                        labelText: 'Select District',
+                        labelStyle: TextStyle(color: Colors.brown.shade900),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                              width: 3, color: Colors.brown.shade900),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 3, color: Colors.brown.shade900),
+                        ),
+                        enabled: !isLoading,
                       ),
                     ),
                   ),
