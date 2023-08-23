@@ -7,19 +7,24 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart'; // Import the UUID package
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 class QrGenerator extends StatefulWidget {
-  const QrGenerator({super.key});
+  const QrGenerator({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _QrGeneratorState createState() => _QrGeneratorState();
 }
 
 class _QrGeneratorState extends State<QrGenerator> {
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _pointsController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
+
   List<String> _generatedQRData = [];
+
+  //int _qrCodesPerPage = 9; // QR codes per page in the PDF
+  final companyLogoPath = 'images/logo.png'; // Provide the actual path
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +33,20 @@ class _QrGeneratorState extends State<QrGenerator> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
             size: 35,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: const Color.fromARGB(255, 70, 63, 60),
+        backgroundColor: Colors.brown.shade900,
         title: const Text(
-          'QR CODE GENERATER',
+          'QR CODE GENERATOR',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 195, 162, 132),
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
@@ -52,18 +57,81 @@ class _QrGeneratorState extends State<QrGenerator> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
-              controller: _quantityController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Enter quantity of QR codes',
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+
+                controller: _quantityController,
+                enabled: true, // You didn't specify the isLoading value here
+                cursorColor: Colors.brown.shade900,
+                decoration: InputDecoration(
+                  counter: const Offstage(),
+                  labelText: 'Enter quantity of QR codes',
+                  labelStyle: TextStyle(color: Colors.brown.shade900),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide:
+                        BorderSide(width: 3, color: Colors.brown.shade900),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 3,
+                      color: Colors.brown.shade900,
+                    ),
+                  ),
+                ),
               ),
             ),
-            TextField(
-              controller: _pointsController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Enter points for QR codes',
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+
+                controller: _pointsController,
+                enabled: true, // You didn't specify the isLoading value here
+                cursorColor: Colors.brown.shade900,
+                decoration: InputDecoration(
+                  counter: const Offstage(),
+                  labelText: 'Enter points for QR codes',
+                  labelStyle: TextStyle(color: Colors.brown.shade900),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide:
+                        BorderSide(width: 3, color: Colors.brown.shade900),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 3,
+                      color: Colors.brown.shade900,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                maxLength: 10,
+                controller: _categoryController,
+                enabled: true, // You didn't specify the isLoading value here
+                cursorColor: Colors.brown.shade900,
+                decoration: InputDecoration(
+                  counter: const Offstage(),
+                  labelText: 'Enter category',
+                  labelStyle: TextStyle(color: Colors.brown.shade900),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide:
+                        BorderSide(width: 3, color: Colors.brown.shade900),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 3,
+                      color: Colors.brown.shade900,
+                    ),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -71,7 +139,7 @@ class _QrGeneratorState extends State<QrGenerator> {
               onPressed: _generateQRCodes,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.brown,
+                backgroundColor: Colors.brown.shade900,
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
@@ -98,7 +166,7 @@ class _QrGeneratorState extends State<QrGenerator> {
               onPressed: _generatePDF,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.brown,
+                backgroundColor: Colors.brown.shade900,
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
@@ -152,21 +220,76 @@ class _QrGeneratorState extends State<QrGenerator> {
   Future<void> _generatePDF() async {
     final pdf = pw.Document();
 
-    for (int i = 0; i < _generatedQRData.length; i++) {
-      final qrCodeData = _generatedQRData[i];
-      final qrCodeImage = await QrPainter(
-        data: qrCodeData,
-        version: QrVersions.auto,
-        gapless: false,
-      ).toImageData(200);
+    final qrCodesPerPage = 44;
+    final rows = 11;
+    final columns = 4;
+
+    for (int i = 0; i < _generatedQRData.length; i += qrCodesPerPage) {
+      final endIndex = (i + qrCodesPerPage <= _generatedQRData.length)
+          ? i + qrCodesPerPage
+          : _generatedQRData.length;
+
+      final pageQRData = _generatedQRData.sublist(i, endIndex);
+
+      final qrCodeWidgets = <pw.Widget>[];
+      for (int j = 0; j < pageQRData.length; j++) {
+        final qrCodeData = pageQRData[j];
+        final qrCodeImage = await QrPainter(
+          data: qrCodeData,
+          version: QrVersions.auto,
+          gapless: false,
+        ).toImageData(55);
+
+        final qrCode = pw.Padding(
+          padding: pw.EdgeInsets.all(4),
+          child: pw.Row(
+            //crossAxisAlignment: pw.CrossAxisAlignment.center,
+            children: [
+              pw.Image(pw.MemoryImage(qrCodeImage!.buffer.asUint8List())),
+              pw.SizedBox(height: 4),
+              pw.Padding(
+                  padding: pw.EdgeInsets.all(4),
+                  child: pw.Column(
+                    children: [
+                      pw.Image(
+                        pw.MemoryImage((await rootBundle.load(companyLogoPath))
+                            .buffer
+                            .asUint8List()),
+                        width: 55,
+                        height: 55,
+                      ),
+                      pw.SizedBox(height: 4),
+                      pw.Text(
+                        _categoryController.text,
+                        style: pw.TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ))
+            ],
+          ),
+        );
+
+        qrCodeWidgets.add(qrCode);
+      }
+
+      final pageRows = <pw.Widget>[];
+      for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
+        final startIndex = rowIndex * columns;
+        final endIndex = (startIndex + columns <= qrCodeWidgets.length)
+            ? startIndex + columns
+            : qrCodeWidgets.length;
+
+        if (startIndex < qrCodeWidgets.length) {
+          pageRows.add(pw.Row(
+            children: qrCodeWidgets.sublist(startIndex, endIndex),
+          ));
+        }
+      }
 
       pdf.addPage(
         pw.Page(
           build: (context) {
-            return pw.Center(
-              child:
-                  pw.Image(pw.MemoryImage(qrCodeImage!.buffer.asUint8List())),
-            );
+            return pw.Wrap(children: pageRows);
           },
         ),
       );
@@ -188,7 +311,6 @@ class _QrGeneratorState extends State<QrGenerator> {
             ElevatedButton(
               onPressed: () async {
                 Navigator.pop(context);
-                // Open the PDF file to view and download it
                 OpenFile.open(pdfPath);
               },
               child: Text('View & Download'),
@@ -197,5 +319,13 @@ class _QrGeneratorState extends State<QrGenerator> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _quantityController.dispose();
+    _pointsController.dispose();
+    _categoryController.dispose(); // Dispose the category controller
+    super.dispose();
   }
 }
