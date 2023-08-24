@@ -400,7 +400,7 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
         ),
         backgroundColor: Colors.brown.shade900,
         title: const Text(
-          'CARPENTER REGESTER',
+          'CARPENTER REGISTER',
           style: TextStyle(
             fontSize: 27,
             fontWeight: FontWeight.bold,

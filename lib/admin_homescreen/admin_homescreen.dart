@@ -34,10 +34,35 @@ List button = [
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
   void logOut() async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.popUntil(context, (route) => route.isFirst);
-    Navigator.pushReplacement(
-        context, CupertinoPageRoute(builder: (context) => AdminPhoneNoLogin()));
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Log Out"),
+          content: Text("Are you sure you want to log out?"),
+          actions: [
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+            TextButton(
+              child: Text("Log Out"),
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close the dialog
+                await FirebaseAuth.instance.signOut();
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacement(
+                  context,
+                  CupertinoPageRoute(builder: (context) => AdminPhoneNoLogin()),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
