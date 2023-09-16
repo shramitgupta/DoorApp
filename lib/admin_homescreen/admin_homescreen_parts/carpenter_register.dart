@@ -421,52 +421,53 @@ class _CarpenterRegisterState extends State<CarpenterRegister> {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: InkWell(
-                        onTap: isLoading
-                            ? null
-                            : () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) {
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        ListTile(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            _getImageFromSource(
-                                                ImageSource.gallery);
-                                          },
-                                          leading: Icon(Icons.photo_library),
-                                          title: Text("Choose from Gallery"),
-                                        ),
-                                        ListTile(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            _getImageFromSource(
-                                                ImageSource.camera);
-                                          },
-                                          leading: Icon(Icons.camera_alt),
-                                          title: Text("Take a Photo"),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            image: (cprofilepic != null)
-                                ? DecorationImage(
-                                    image: FileImage(cprofilepic!),
-                                    fit: BoxFit.cover,
-                                  )
-                                : null,
-                            color: Colors.brown.shade200,
-                          ),
-                        )),
+                      onTap: isLoading
+                          ? null
+                          : () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ListTile(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          _getImageFromSource(
+                                              ImageSource.gallery);
+                                        },
+                                        leading: Icon(Icons.photo_library),
+                                        title: Text("Choose from Gallery"),
+                                      ),
+                                      ListTile(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          _getImageFromSource(
+                                              ImageSource.camera);
+                                        },
+                                        leading: Icon(Icons.camera_alt),
+                                        title: Text("Take a Photo"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: (cprofilepic != null)
+                              ? DecorationImage(
+                                  image: FileImage(cprofilepic!),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                          color: Colors.brown.shade200,
+                        ),
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),

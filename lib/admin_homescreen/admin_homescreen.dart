@@ -1,3 +1,4 @@
+import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_events.dart';
 import 'package:doorapp/auth/admin_auth/admin_phoneno_login.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_addgift.dart';
 import 'package:doorapp/admin_homescreen/admin_homescreen_parts/carpenter_delete.dart';
@@ -29,6 +30,7 @@ List button = [
   'Total Gifts Sent',
   'Add Gifts',
   'Delete Carpenter',
+  'Add Events',
   'LOGOUT'
 ];
 
@@ -161,6 +163,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               ),
                             );
                           } else if (index == 9) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CarpenterEvents(),
+                              ),
+                            );
+                          } else if (index == 10) {
                             logOut();
                           }
                         },
