@@ -85,6 +85,17 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
     );
   }
 
+  void showSuccessSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.green, // You can customize the background color
+        behavior: SnackBarBehavior.floating, // You can adjust the behavior
+      ),
+    );
+  }
+
   Future<void> eventsadd() async {
     log('hi');
     setState(() {
@@ -117,14 +128,20 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
         "eventdiscription": eventdiscription,
         "time": currentTime,
       };
-      FirebaseFirestore.instance.collection("events").add(eventsData);
+
+      try {
+        await FirebaseFirestore.instance.collection("events").add(eventsData);
+        // Data uploaded successfully, show success message
+        Navigator.pop(context); // Hide the loading dialog
+        showSuccessSnackbar('Event added successfully!');
+      } catch (error) {
+        // Handle any errors that may occur during the upload
+        showErrorSnackbar('Error: $error');
+      }
 
       setState(() {
         isUploading = false;
       });
-
-      Navigator.pop(context); // Hide the loading dialog
-      showSuccessDialog(); // Show the success dialog
     } else {
       log('fill data');
       setState(() {
@@ -262,7 +279,7 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
                               child: const Text('Add Events'),
                               onPressed: () {
                                 eventsadd();
-                                // Navigator.pop(context);
+                                Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
