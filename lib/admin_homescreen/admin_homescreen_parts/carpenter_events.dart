@@ -22,7 +22,17 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
 
   bool isUploading = false;
 
-  // Helper function to show a date picker
+  @override
+  void dispose() {
+    eventDateController.dispose();
+    eventPlaceController.dispose();
+    eventDescriptionController.dispose();
+    eventTitleController.dispose();
+    eventTimeFromController.dispose();
+    eventTimeToController.dispose();
+    super.dispose();
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime pickedDate = (await showDatePicker(
       context: context,
@@ -38,7 +48,6 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
     }
   }
 
-  // Helper function to show a time picker
   Future<void> _selectTime(BuildContext context, bool isStartTime) async {
     final TimeOfDay pickedTime = (await showTimePicker(
       context: context,
@@ -58,7 +67,6 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
     }
   }
 
-  // Helper function to format TimeOfDay as a string
   String formatTimeOfDay(TimeOfDay? timeOfDay) {
     if (timeOfDay == null) {
       return 'Select Time';
@@ -70,7 +78,6 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
     return formatter.format(selectedDateTime);
   }
 
-  // Helper function to display a snack bar with an error message
   void showErrorSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -81,7 +88,6 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
     );
   }
 
-  // Helper function to display a success dialog
   void showSuccessDialog() {
     showDialog(
       context: context,
@@ -102,7 +108,6 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
     );
   }
 
-  // Helper function to display a loading dialog
   void showLoadingDialog() {
     showDialog(
       context: context,
@@ -121,7 +126,6 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
     );
   }
 
-  // Helper function to display a success snack bar
   void showSuccessSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -132,7 +136,6 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
     );
   }
 
-  // Helper function to clear all input fields
   void clearFields() {
     eventDateController.clear();
     eventPlaceController.clear();
@@ -144,7 +147,6 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
     selectedTimeTo = null;
   }
 
-  // Function to add events
   Future<void> addEvent() async {
     setState(() {
       isUploading = true;
@@ -191,7 +193,53 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
       clearFields();
     } catch (error) {
       showErrorSnackbar('Error: $error');
+    } finally {
+      setState(() {
+        isUploading = false;
+      });
     }
+  }
+
+  Future<void> deleteEvent(String documentId) async {
+    bool confirmDelete = false;
+
+    // Show a confirmation dialog
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Delete'),
+          content: Text('Are you sure you want to delete this event?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed == true) {
+        // User confirmed deletion, proceed to delete the event
+        FirebaseFirestore.instance
+            .collection("events")
+            .doc(documentId)
+            .delete()
+            .then((_) {
+          showSuccessSnackbar('Event deleted successfully!');
+        }).catchError((error) {
+          showErrorSnackbar('Error deleting event: $error');
+        });
+      }
+    });
   }
 
   @override
@@ -249,7 +297,12 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
                   itemCount: events.length,
                   itemBuilder: (context, index) {
                     final event = events[index].data() as Map<String, dynamic>;
-                    return EventListItem(event: event);
+                    final documentId = events[index].id;
+                    return EventListItem(
+                      event: event,
+                      documentId: documentId,
+                      onDelete: () => deleteEvent(documentId),
+                    );
                   },
                 );
               },
@@ -475,7 +528,6 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 20),
                               ElevatedButton(
                                 child: const Text('Add Event'),
                                 onPressed: () {
@@ -521,8 +573,14 @@ class _CarpenterEventsState extends State<CarpenterEvents> {
 
 class EventListItem extends StatelessWidget {
   final Map<String, dynamic> event;
+  final String documentId;
+  final VoidCallback onDelete;
 
-  EventListItem({required this.event});
+  EventListItem({
+    required this.event,
+    required this.documentId,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -552,10 +610,14 @@ class EventListItem extends StatelessWidget {
                     event['eventTitle'],
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                  Icon(
-                    Icons.event,
-                    color: const Color.fromARGB(182, 0, 0, 0),
-                  )
+                  InkWell(
+                    onTap:
+                        onDelete, // Call the onDelete callback to delete the event
+                    child: Icon(
+                      Icons.delete,
+                      color: Colors.black,
+                    ),
+                  ),
                 ],
               ),
             ),
