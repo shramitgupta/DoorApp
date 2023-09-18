@@ -163,8 +163,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const UserUpcommingEvent(),
+                                builder: (context) => UserUpcomingEvent(),
                               ),
                             );
                           } else if (index == 10) {
